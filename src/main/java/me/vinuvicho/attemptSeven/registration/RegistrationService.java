@@ -1,6 +1,7 @@
 package me.vinuvicho.attemptSeven.registration;
 
 import lombok.AllArgsConstructor;
+import me.vinuvicho.attemptSeven.email.EmailSender;
 import me.vinuvicho.attemptSeven.entity.user.User;
 import me.vinuvicho.attemptSeven.entity.user.UserRole;
 import me.vinuvicho.attemptSeven.entity.user.UserService;
@@ -17,6 +18,7 @@ public class RegistrationService {
 
     private final UserService userService;
     private final ConfirmationTokenService confirmationTokenService;
+    private final EmailSender emailSender;
 
     public String register(RegistrationRequest request) {
         if (!new Validate().validateEmail(request.getEmail())) {
@@ -32,11 +34,9 @@ public class RegistrationService {
         );
 
         String confirmLink = "http://localhost:8080/api/v1/registration/confirm?token=" + token;
-        String rejectLink = "http://localhost:8080/api/v1/registration/reject?token=" + token;
-//        TODO email sender
-//                  emailSender.send(
-//                  request.getEmail(),
-//                  buildEmail(request.getFirstName(), confirmLink, rejectLink));
+//        String rejectLink = "http://localhost:8080/api/v1/registration/reject?token=" + token;      //TODO: reject
+
+        emailSender.send(request.getEmail(), buildEmail(request.getUsername(), confirmLink));
         return token;
     }
 
