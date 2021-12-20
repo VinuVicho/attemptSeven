@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+import static me.vinuvicho.attemptSeven.security.ApplicationUserRole.*;
+
 @Configuration
 @EnableWebSecurity
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -28,6 +30,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/scripts/test.js").permitAll()             //можна без аутентифікації
+                .antMatchers("/user/**").hasRole(ADMIN.name())                                   //Тільки Адміни мають доступ
                 .anyRequest().authenticated().and()
                 .httpBasic();                                                                               //форма зверху
     }
@@ -35,11 +38,19 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     @Bean
     protected UserDetailsService userDetailsService() {
+
         UserDetails userVinuVicho = User.builder()
                 .username("VinuVicho")
                 .password(passwordEncoder.encode("1"))
-                .roles("ADMIN")                                                                             //спрінг розуміє як ROLE_ADMIN
+                .roles(ADMIN.name())                                                                             //спрінг розуміє як ROLE_ADMIN
                 .build();
-        return new InMemoryUserDetailsManager(userVinuVicho);
+
+        UserDetails userKodlon = User.builder()
+                .username("Kodlon")
+                .password(passwordEncoder.encode("1"))
+                .roles(USER.name())                                                                             //спрінг розуміє як ROLE_USER
+                .build();
+
+        return new InMemoryUserDetailsManager(userKodlon, userVinuVicho);
     }
 }
