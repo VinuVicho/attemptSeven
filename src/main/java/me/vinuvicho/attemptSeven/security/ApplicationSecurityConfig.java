@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import static me.vinuvicho.attemptSeven.security.ApplicationUserRole.*;
 
@@ -31,10 +30,11 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-//                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()          //disabled for now  TODO: make csrf
-                .csrf().disable()
+                .csrf()
+//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()          //disabled for now  TODO: make csrf
+                .disable()
                 .authorizeRequests()
-                .antMatchers("/", "index", "/css/*", "/scripts/test.js").permitAll()             //можна без аутентифікації
+                .antMatchers("/", "index", "/css/*", "/scripts/test.js", "logout").permitAll()   //можна без аутентифікації
                 .antMatchers("/user/**").hasRole(ADMIN.name())                                   //Тільки Адміни мають доступ
 //                .antMatchers(HttpMethod.DELETE, "/management/**").hasAuthority(USER_EDIT.getPermission()) //замінив на @PreAuthorise
 //                .antMatchers(HttpMethod.POST, "/management/**").hasAuthority(USER_EDIT.getPermission())
@@ -42,7 +42,10 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/management/**").hasAnyRole(ADMIN.name(), HALF_ADMIN.name())
                 .anyRequest().authenticated().and()
                 .formLogin()                                                                                //форма зверху -- httpBasic
-                .and().rememberMe();
+                .loginPage("/login").permitAll()
+//                .defaultSuccessUrl("/posts", true)                                                        //redirect
+                .and().rememberMe().and()
+                .logout().logoutSuccessUrl("/");
     }
 
     @Override
