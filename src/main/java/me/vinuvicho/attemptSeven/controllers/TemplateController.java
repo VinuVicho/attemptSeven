@@ -12,7 +12,7 @@ public class TemplateController {
     public String getLoginView() {
         return "login";
     }
-
+            //just something
 //    @GetMapping("posts")
 //    public String getPosts() {
 //        return "posts";
