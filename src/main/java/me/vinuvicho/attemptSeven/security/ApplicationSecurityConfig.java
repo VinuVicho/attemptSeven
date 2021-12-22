@@ -41,7 +41,8 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers(HttpMethod.PUT, "/management/**").hasAuthority(USER_EDIT.getPermission())
 //                .antMatchers("/management/**").hasAnyRole(ADMIN.name(), HALF_ADMIN.name())
                 .anyRequest().authenticated().and()
-                .httpBasic();                                                                               //форма зверху
+                .formLogin()                                                                                //форма зверху -- httpBasic
+                .and().rememberMe();
     }
 
     @Override
