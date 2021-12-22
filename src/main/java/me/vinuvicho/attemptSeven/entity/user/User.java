@@ -12,8 +12,17 @@ public class User {
         return userName;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", userName='" + userName + '\'' +
+                '}';
+    }
+
     public User(Integer userId, String userName) {
         this.userId = userId;
         this.userName = userName;
     }
 }
+
