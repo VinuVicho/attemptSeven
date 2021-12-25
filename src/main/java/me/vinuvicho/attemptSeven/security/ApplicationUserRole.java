@@ -1,7 +1,6 @@
 package me.vinuvicho.attemptSeven.security;
 
 import com.google.common.collect.Sets;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Set;
@@ -16,8 +15,7 @@ public enum ApplicationUserRole {
     ADMIN(Sets.newHashSet(COURSE_READ, COURSE_WRITE, USER_READ, USER_WRITE,
             POST_EDIT, POST_COMMENT, POST_CREATE, USER_EDIT)),
     HALF_ADMIN(Sets.newHashSet(COURSE_READ, USER_READ));
-
-
+    
     private final Set<ApplicationUserPermission> permissions;
 
     ApplicationUserRole(Set<ApplicationUserPermission> permissions) {

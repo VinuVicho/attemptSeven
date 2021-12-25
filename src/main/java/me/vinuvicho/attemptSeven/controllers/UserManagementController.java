@@ -4,7 +4,6 @@ import me.vinuvicho.attemptSeven.entity.user.User;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.ref.SoftReference;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,9 +12,9 @@ import java.util.List;
 public class UserManagementController {
 
     private static final List<User> USERS = Arrays.asList(
-            new User(1, "VinuVicho"),
-            new User(2, "Kodlon"),
-            new User(3, "Vouzze")
+//            new User(1, "VinuVicho"),
+//            new User(2, "Kodlon"),
+//            new User(3, "Vouzze")
     );
 
     @GetMapping
