@@ -5,23 +5,23 @@ server:
 
 spring:
   datasource:
-    password:
-    username:
-    url: jdbc:postgresql://localhost:5432/attemptSevenDB
+    url: #DB link jdbc:postgresql://localhost:5432/****
+    username: #DB user
+    password: #DB password
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-    show-sql: true
+  #    show-sql: true
 
   mail:
-    host: localhost
-    port: 1025
-    username: hello
-    password: hello
+    host: smtp.gmail.com
+    port: 587
+    username: #Email
+    password: #Password
 
     properties:
       mail:
@@ -31,6 +31,3 @@ spring:
           auth: true
           starttls:
             enable: true
-          connectiontimeout: 5000
-          timeout: 3000
-          writetimeout: 5000

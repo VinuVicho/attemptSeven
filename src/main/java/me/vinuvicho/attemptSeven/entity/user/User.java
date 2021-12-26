@@ -4,52 +4,40 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
 
 public class User implements UserDetails {
 
-    private final List<? extends GrantedAuthority> grantedAuthorities;
+    private Long id;
     private final String password;
     private final String username;
     private final String email;
+    private final UserRole userRole;
 
-    private final boolean expired;
     private final boolean locked;
-    private final boolean expiredCredentials;
     private final boolean enabled;
 
-
-    public User(List<? extends GrantedAuthority> grantedAuthorities,
+    public User(UserRole userRole,          //not sure
                 String password,
                 String username,
                 String email,
-                boolean expired,
                 boolean locked,
-                boolean expiredCredentials,
                 boolean enabled) {
-        this.grantedAuthorities = grantedAuthorities;
+        this.userRole = userRole;
         this.password = password;
         this.username = username;
         this.email = email;
-        this.expired = expired;
         this.locked = locked;
-        this.expiredCredentials = expiredCredentials;
         this.enabled = enabled;
     }
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return grantedAuthorities;
+        return userRole.getGrantedAuthorities();
     }
 
     @Override
     public String getPassword() {
         return password;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     @Override
@@ -59,7 +47,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return !expired;
+        return true;
     }
 
     @Override
@@ -69,7 +57,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return !expiredCredentials;
+        return true;
     }
 
     @Override
