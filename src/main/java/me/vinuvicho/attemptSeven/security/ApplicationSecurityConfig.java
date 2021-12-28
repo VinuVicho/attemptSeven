@@ -16,7 +16,7 @@ import static me.vinuvicho.attemptSeven.entity.user.UserRole.ADMIN;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)          //?
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
@@ -48,7 +48,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().rememberMe().and()
                 .logout().logoutSuccessUrl("/");
     }
-//
+
 //    @Override
 //    @Bean
 //    protected UserDetailsService userDetailsService() {
@@ -79,7 +79,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(daoAuthenticationProvider());
     }
 
@@ -90,6 +90,4 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         provider.setUserDetailsService(userService);
         return provider;
     }
-
-
 }
