@@ -17,4 +17,16 @@ public class UserService implements UserDetailsService {
         return userDao.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username + " not found"));
     }
+
+    public String signUpUser(User user) {
+        boolean userExists =
+                userDao.findByUsername(user.getUsername()).isPresent() ||
+                userDao.findByEmail(user.getEmail()).isPresent();
+        if (userExists) {
+            throw new IllegalStateException("Username or Email is already taken");
+        }
+            //TODO зупинився тут
+
+        return null;
+    }
 }

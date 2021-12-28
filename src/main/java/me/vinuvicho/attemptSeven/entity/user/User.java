@@ -20,22 +20,19 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
     private Long id;
-    private String password;
     private String username;
     private String email;
+    private String password;
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
     private boolean locked;
     private boolean enabled;
 
-    public User(String password, String username, String email, UserRole userRole, boolean locked, boolean enabled) {
-        this.password = password;
+    public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
-        this.userRole = userRole;
-        this.locked = locked;
-        this.enabled = enabled;
+        this.password = password;
     }
 
     @Override

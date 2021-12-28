@@ -35,7 +35,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()          //disabled for now  TODO: make csrf
                 .disable()
                 .authorizeRequests()
-                .antMatchers("/", "index", "/css/*", "/scripts/test.js", "logout").permitAll()   //можна без аутентифікації
+                .antMatchers("/", "index", "/css/*", "/scripts/test.js", "/logout", "/register").permitAll()   //можна без аутентифікації
                 .antMatchers("/user/**").hasRole(ADMIN.name())                                   //Тільки Адміни мають доступ
 //                .antMatchers(HttpMethod.DELETE, "/management/**").hasAuthority(USER_EDIT.getPermission()) //замінив на @PreAuthorise
 //                .antMatchers(HttpMethod.POST, "/management/**").hasAuthority(USER_EDIT.getPermission())
