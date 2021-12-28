@@ -13,7 +13,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
-@Table(name = "users")
+@Table(name = "users")                              //user -- ключове слово в Postgre
 public class User implements UserDetails {
 
     @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
