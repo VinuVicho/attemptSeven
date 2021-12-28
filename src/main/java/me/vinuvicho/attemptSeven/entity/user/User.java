@@ -1,41 +1,35 @@
 package me.vinuvicho.attemptSeven.entity.user;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Objects;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @Entity
+@Table(name = "users")
 public class User implements UserDetails {
 
-//    @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
+    @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
     @Id
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
     private Long id;
     private String password;
     private String username;
     private String email;
     @Enumerated(EnumType.STRING)
-    private UserRoleName userRole;
+    private UserRole userRole;
 
     private boolean locked;
     private boolean enabled;
 
-    public User(String password, String username, String email, UserRoleName userRole, boolean locked, boolean enabled) {
+    public User(String password, String username, String email, UserRole userRole, boolean locked, boolean enabled) {
         this.password = password;
         this.username = username;
         this.email = email;
@@ -46,8 +40,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return userRole.getGrantedAuthorities();
-        return Collections.singletonList(new SimpleGrantedAuthority(userRole.name()));
+        return userRole.getGrantedAuthorities();
     }
 
     @Override
@@ -91,5 +84,6 @@ public class User implements UserDetails {
     public int hashCode() {
         return getClass().hashCode();
     }
+    public User() {}
 }
 
