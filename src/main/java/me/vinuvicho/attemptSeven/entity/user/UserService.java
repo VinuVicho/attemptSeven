@@ -1,11 +1,16 @@
 package me.vinuvicho.attemptSeven.entity.user;
 
 import lombok.AllArgsConstructor;
+import me.vinuvicho.attemptSeven.registration.token.ConfirmationToken;
+import me.vinuvicho.attemptSeven.registration.token.ConfirmationTokenService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -13,6 +18,7 @@ public class UserService implements UserDetailsService {
 
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
+    private final ConfirmationTokenService confirmationTokenService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -31,8 +37,15 @@ public class UserService implements UserDetailsService {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
         userDao.save(user);
+
+        ConfirmationToken token = new ConfirmationToken(
+                UUID.randomUUID().toString(),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(15),
+                user);
+        confirmationTokenService.saveConfirmationToken(token);
             //TODO зупинився тут
 
-        return "yes?";
+        return token.getToken();
     }
 }
