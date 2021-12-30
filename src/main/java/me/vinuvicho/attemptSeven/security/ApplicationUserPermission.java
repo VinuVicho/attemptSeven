@@ -4,7 +4,8 @@ public enum ApplicationUserPermission {
     POST_CREATE("post:create"),
     POST_COMMENT("post:comment"),
     POST_EDIT("post:edit"),
-    USER_EDIT("user:edit");
+    USER_EDIT("user:edit"),
+    ADMIN_EDIT("admin:edit");
 
     private final String permission;
 

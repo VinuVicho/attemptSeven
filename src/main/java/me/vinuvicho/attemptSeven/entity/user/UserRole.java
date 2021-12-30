@@ -13,7 +13,8 @@ public enum UserRole {
     GUEST(Sets.newHashSet()),
     BANNED(Sets.newHashSet()),
     USER(Sets.newHashSet(POST_CREATE, POST_COMMENT)),
-    ADMIN(Sets.newHashSet(POST_EDIT, POST_COMMENT, POST_CREATE, USER_EDIT));
+    ADMIN(Sets.newHashSet(POST_EDIT, POST_COMMENT, POST_CREATE, USER_EDIT)),
+    CREATOR(Sets.newHashSet(POST_EDIT, POST_COMMENT, POST_CREATE, USER_EDIT, ADMIN_EDIT));
     
     private final Set<ApplicationUserPermission> permissions;
 
