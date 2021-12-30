@@ -21,13 +21,16 @@ public class ConfirmationToken {
     private String token;
     private LocalDateTime createdAt;
     private LocalDateTime expiresAt;
-    private LocalDateTime confirmed;
+    private LocalDateTime confirmedAt;
+    @Enumerated(EnumType.STRING)
+    private TokenType tokenType;
 
-    public ConfirmationToken(String token, LocalDateTime createdAt, LocalDateTime expiresAt, User user) {
+    public ConfirmationToken(String token, LocalDateTime createdAt, LocalDateTime expiresAt, User user, TokenType tokenType) {
         this.token = token;
         this.createdAt = createdAt;
         this.expiresAt = expiresAt;
         this.user = user;
+        this.tokenType = tokenType;
     }
 
     public ConfirmationToken() {

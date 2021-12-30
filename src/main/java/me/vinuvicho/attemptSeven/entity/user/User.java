@@ -24,12 +24,12 @@ public class User implements UserDetails {
     private String email;
     private String password;
     @Enumerated(EnumType.STRING)
-    private UserRole userRole;
+    private UserRole userRole = UserRole.USER;
 
     private boolean locked = false;
     private boolean enabled = false;
 
-    public User(String username, String email, String password) {
+    public User(String username, String email, String password, UserRole userRole) {
         this.username = username;
         this.email = email;
         this.password = password;

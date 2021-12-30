@@ -3,6 +3,7 @@ package me.vinuvicho.attemptSeven.entity.user;
 import lombok.AllArgsConstructor;
 import me.vinuvicho.attemptSeven.registration.token.ConfirmationToken;
 import me.vinuvicho.attemptSeven.registration.token.ConfirmationTokenService;
+import me.vinuvicho.attemptSeven.registration.token.TokenType;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,14 +27,15 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(username + " not found"));
     }
 
-    public String signUpUser(User user) {
+    public String signUpUser(User user) {       //returns token to confirm
         boolean userExists =
                 userDao.findByUsername(user.getUsername()).isPresent() ||
                 userDao.findByEmail(user.getEmail()).isPresent();
         if (userExists) {
+            //TODO if user exists but not confirmed, send confirmation email again
             throw new IllegalStateException("Username or Email is already taken");
         }
-                //Steal password here))
+                //Steal password here   xd
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
         userDao.save(user);
@@ -42,10 +44,16 @@ public class UserService implements UserDetailsService {
                 UUID.randomUUID().toString(),
                 LocalDateTime.now(),
                 LocalDateTime.now().plusMinutes(15),
-                user);
+                user,
+                TokenType.VERIFY_ACCOUNT
+        );
         confirmationTokenService.saveConfirmationToken(token);
-            //TODO зупинився тут
+            //TODO send email?
 
         return token.getToken();
+    }
+
+    public int enableUser(String email) {
+        return userDao.enableUser(email);
     }
 }
