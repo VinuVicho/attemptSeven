@@ -1,9 +1,9 @@
-package me.vinuvicho.attemptSeven;
+package me.vinuvicho.attemptSeven.tests;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-public class Tests {
+public class Tests<T> {
     public static void main(String[] args) {
 //        System.out.println(!new Validate().validateEmail("dd"));
         LocalDateTime now = LocalDateTime.now();
@@ -18,5 +18,7 @@ public class Tests {
 
         Duration duration = Duration.between(now, LocalDateTime.now());
         System.out.println(duration.toMillis());
+
+
     }
 }
