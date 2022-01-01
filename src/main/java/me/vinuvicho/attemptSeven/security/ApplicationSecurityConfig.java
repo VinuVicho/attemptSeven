@@ -16,7 +16,7 @@ import static me.vinuvicho.attemptSeven.entity.user.UserRole.ADMIN;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)          //?
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
@@ -38,8 +38,6 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/**", "index", "/css/*", "/scripts/test.js", "/logout", "/register/**").permitAll()   //можна без аутентифікації
                 .antMatchers("/user/**").hasRole(ADMIN.name())                                   //Тільки Адміни мають доступ
 //                .antMatchers(HttpMethod.DELETE, "/management/**").hasAuthority(USER_EDIT.getPermission()) //замінив на @PreAuthorise
-//                .antMatchers(HttpMethod.POST, "/management/**").hasAuthority(USER_EDIT.getPermission())
-//                .antMatchers(HttpMethod.PUT, "/management/**").hasAuthority(USER_EDIT.getPermission())
 //                .antMatchers("/management/**").hasAnyRole(ADMIN.name(), HALF_ADMIN.name())
                 .anyRequest().authenticated().and()
                 .formLogin()                                                                                //форма зверху -- httpBasic
@@ -56,25 +54,10 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 //        UserDetails userVinuVicho = User.builder()
 //                .username("VinuVicho")
 //                .password(passwordEncoder.encode("1"))
-////                .roles(ADMIN.name())                                                                             //спрінг розуміє як ROLE_ADMIN
+////                .roles(ADMIN.name())                                                                     //спрінг розуміє як ROLE_ADMIN
 //                .authorities(ADMIN.getGrantedAuthorities())
 //                .build();
-//
-//        UserDetails userKodlon = User.builder()
-//                .username("Kodlon")
-//                .password(passwordEncoder.encode("1"))
-////                .roles(USER.name())                                                                             //спрінг розуміє як ROLE_USER
-//                .authorities(USER.getGrantedAuthorities())
-//                .build();
-//
-//        UserDetails userVouzze = User.builder()
-//                .username("Vouzze")
-//                .password(passwordEncoder.encode("1"))
-////                .roles(HALF_ADMIN.name())                                                                             //спрінг розуміє як ROLE_HALF_ADMIN
-//                .authorities(HALF_ADMIN.getGrantedAuthorities())
-//                .build();
-//
-//        return new InMemoryUserDetailsManager(userKodlon, userVinuVicho, userVouzze);
+//        return new InMemoryUserDetailsManager(userVinuVicho);
 //    }
 
 

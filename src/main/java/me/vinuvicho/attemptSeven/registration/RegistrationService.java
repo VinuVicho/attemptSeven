@@ -33,8 +33,8 @@ public class RegistrationService {
             )
         );
 
-        String confirmLink = "http://localhost:8080/api/v1/registration/confirm?token=" + token;
-//        String rejectLink = "http://localhost:8080/api/v1/registration/reject?token=" + token;      //TODO: reject
+        String confirmLink = "http://localhost:8080/register/confirm?token=" + token;
+//        String rejectLink = "http://localhost:8080/register/reject?token=" + token;      //TODO: reject
 
         emailSender.send(request.getEmail(), buildEmail(request.getUsername(), confirmLink));
         return token;

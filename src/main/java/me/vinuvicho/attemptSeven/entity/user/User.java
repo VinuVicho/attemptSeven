@@ -2,6 +2,7 @@ package me.vinuvicho.attemptSeven.entity.user;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +13,7 @@ import java.util.Objects;
 
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(name = "users")                              //user -- ключове слово в Postgre
 public class User implements UserDetails {

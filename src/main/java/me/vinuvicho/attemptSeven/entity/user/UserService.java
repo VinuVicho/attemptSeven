@@ -33,7 +33,14 @@ public class UserService implements UserDetailsService {
                 userDao.findByEmail(user.getEmail()).isPresent();
         if (userExists) {
             //TODO if user exists but not confirmed, send confirmation email again
-            throw new IllegalStateException("Username or Email is already taken");
+            User realUser =
+                    userDao.findByUsername(user.getUsername()).orElse(
+                    userDao.findByEmail(user.getEmail()).orElseThrow());
+            if (realUser.isEnabled())
+                throw new IllegalStateException("User with such email or username already exists");
+            else {
+
+            }
         }
                 //Steal password here   xd
         String encodedPassword = passwordEncoder.encode(user.getPassword());
