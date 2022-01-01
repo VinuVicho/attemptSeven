@@ -55,12 +55,10 @@ public class UserService implements UserDetailsService {
                 TokenType.VERIFY_ACCOUNT
         );
         confirmationTokenService.saveConfirmationToken(token);
-            //TODO send email?
-
         return token.getToken();
     }
 
-    public int enableUser(String email) {
-        return userDao.enableUser(email);
+    public void enableUser(String email) {
+        userDao.enableUser(email);
     }
 }
