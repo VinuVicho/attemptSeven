@@ -19,7 +19,7 @@ public class UserService implements UserDetailsService {
 
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
-    private final ConfirmationTokenService confirmationTokenService;
+    private final ConfirmationTokenService tokenService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -27,19 +27,22 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(username + " not found"));
     }
 
-    public String signUpUser(User user) {       //returns token to confirm
+    public ConfirmationToken signUpUser(User user) {       //returns token to confirm
         boolean userExists =
                 userDao.findByUsername(user.getUsername()).isPresent() ||
                 userDao.findByEmail(user.getEmail()).isPresent();
         if (userExists) {
-            //TODO if user exists but not confirmed, send confirmation email again
             User realUser =
                     userDao.findByUsername(user.getUsername()).orElse(
                     userDao.findByEmail(user.getEmail()).orElseThrow());
             if (realUser.isEnabled())
                 throw new IllegalStateException("User with such email or username already exists");
             else {
-
+                ConfirmationToken token = tokenService.checkVerifyTokenUnconfirmed(realUser);
+                if (token.getExpiresAt().minusMinutes(5).isAfter(LocalDateTime.now())) {
+                    return token;
+                }
+                tokenService.setConfirmedAt(token.getToken(), LocalDateTime.now().withYear(0));  //FIXME: кастиль, зробити delete
             }
         }
                 //Steal password here   xd
@@ -54,8 +57,8 @@ public class UserService implements UserDetailsService {
                 user,
                 TokenType.VERIFY_ACCOUNT
         );
-        confirmationTokenService.saveConfirmationToken(token);
-        return token.getToken();
+        tokenService.saveConfirmationToken(token);
+        return token;
     }
 
     public void enableUser(String email) {

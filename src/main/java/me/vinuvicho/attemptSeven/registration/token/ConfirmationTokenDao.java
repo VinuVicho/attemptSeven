@@ -13,9 +13,7 @@ import java.util.Optional;
 @Repository
 public interface ConfirmationTokenDao extends JpaRepository<ConfirmationToken, Long> {
     Optional<ConfirmationToken> findByToken(String token);
-    Optional<ConfirmationToken> findByUserAndTokenType(User user, TokenType tokenType);
-
-
+    Optional<ConfirmationToken> findByUserAndTokenTypeAndConfirmedAt(User user, TokenType tokenType, LocalDateTime localDateTime);
 
     @Transactional
     @Modifying

@@ -1,6 +1,7 @@
 package me.vinuvicho.attemptSeven.registration.token;
 
 import lombok.AllArgsConstructor;
+import me.vinuvicho.attemptSeven.entity.user.User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,7 +20,12 @@ public class ConfirmationTokenService {
         return confirmationTokenDao.findByToken(token);
     }
 
-    public void setConfirmedAt(String token) {
-        confirmationTokenDao.updateConfirmedAt(token, LocalDateTime.now());
+    public void setConfirmedAt(String token, LocalDateTime time) {
+        confirmationTokenDao.updateConfirmedAt(token, time);
+    }
+
+    public ConfirmationToken checkVerifyTokenUnconfirmed(User user) {
+        return confirmationTokenDao.findByUserAndTokenTypeAndConfirmedAt(user, TokenType.VERIFY_ACCOUNT, null)
+                .orElseThrow();
     }
 }
