@@ -15,10 +15,6 @@ public interface ConfirmationTokenDao extends JpaRepository<ConfirmationToken, L
     Optional<ConfirmationToken> findByToken(String token);
     Optional<ConfirmationToken> findByUserAndTokenTypeAndConfirmedAt(User user, TokenType tokenType, LocalDateTime localDateTime);
 
-    /*
-    Розібратись як працює delete
-
-    */
     @Transactional
     @Modifying
     @Query("UPDATE ConfirmationToken c " +

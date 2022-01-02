@@ -39,7 +39,7 @@ public class UserService implements UserDetailsService {
                 throw new IllegalStateException("User with such email or username already exists");
             else {
                 ConfirmationToken token = tokenService.checkVerifyTokenUnconfirmed(realUser);
-                if (token.getExpiresAt().minusMinutes(13).isAfter(LocalDateTime.now())) {
+                if (token.getExpiresAt().minusMinutes(5).isAfter(LocalDateTime.now())) {
                     return token;
                 }
                 tokenService.setConfirmedAt(token.getToken(), LocalDateTime.now().withYear(0));  //FIXME: кастиль, зробити delete
