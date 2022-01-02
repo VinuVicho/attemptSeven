@@ -24,7 +24,7 @@ public class RegistrationService {
         if (!new Validate().validateEmail(request.getEmail())) {
             throw new IllegalStateException("Email not valid");
         }
-        String token = userService.signUpUser(
+        ConfirmationToken token = userService.signUpUser(
             new User(
                     request.getUsername(),
                     request.getEmail(),
@@ -33,11 +33,11 @@ public class RegistrationService {
             )
         );
 
-        String confirmLink = "http://localhost:8080/register/confirm?token=" + token;
-//        String rejectLink = "http://localhost:8080/register/reject?token=" + token;      //TODO: reject
+        String confirmLink = "http://localhost:8080/register/confirm?token=" + token.getToken();
+//        String rejectLink = "http://localhost:8080/register/reject?token=" + token.getToken();      //TODO: reject
 
         emailSender.send(request.getEmail(), buildEmail(request.getUsername(), confirmLink));
-        return token;
+        return confirmLink;
     }
 
     @Transactional
@@ -50,7 +50,7 @@ public class RegistrationService {
         if (confirmationToken.getExpiresAt().isBefore(LocalDateTime.now())) {
             throw new IllegalStateException("token expired");
         }
-        confirmationTokenService.setConfirmedAt(token);
+        confirmationTokenService.setConfirmedAt(token, LocalDateTime.now());
         userService.enableUser(confirmationToken.getUser().getEmail());
         return "confirmed";
     }
