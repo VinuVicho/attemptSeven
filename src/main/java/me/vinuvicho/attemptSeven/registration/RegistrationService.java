@@ -37,18 +37,22 @@ public class RegistrationService {
         String rejectLink = "http://localhost:8080/register/reject?token=" + token.getToken();
 
         emailSender.send(request.getEmail(), buildEmail(request.getUsername(), confirmLink, rejectLink));
-        return confirmLink;
+        return rejectLink;
     }
 
     @Transactional
     public String confirmToken(String token) {
         ConfirmationToken confirmationToken = confirmationTokenService.getToken(token)
                 .orElseThrow(() -> new IllegalStateException("token not found"));
-        if (confirmationToken.getConfirmedAt() != null &&
-                confirmationToken.getConfirmedAt().isAfter(LocalDateTime.now().withYear(666))) {    //кастиль, рік = 1, якщо час сплив, 10 - rejected
-            throw new IllegalStateException("Email already confirmed");
+        if (confirmationToken.getConfirmedAt() != null) {
+            if (confirmationToken.getConfirmedAt().isAfter(LocalDateTime.now().withYear(666))) {    //кастиль, рік = 1, якщо час сплив, 10 - rejected
+                throw new IllegalStateException("Email already confirmed");
+            }
+            if (confirmationToken.getConfirmedAt().getYear() == 11) {
+                throw new IllegalStateException("Token already rejected");
+            }
         }
-        if (confirmationToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+        if (confirmationToken.getExpiresAt().isBefore(LocalDateTime.now()) || confirmationToken.getConfirmedAt().getYear() == 1) {
             throw new IllegalStateException("Token expired");
         }
         confirmationTokenService.setConfirmedAt(token, LocalDateTime.now());
@@ -62,9 +66,11 @@ public class RegistrationService {
                 .orElseThrow(() -> new IllegalStateException("token not found"));
         if (rejectedToken.getConfirmedAt() != null &&
                 rejectedToken.getConfirmedAt().isAfter(LocalDateTime.now().withYear(666))) {    //кастиль, рік = 1, якщо час сплив, 10 - rejected
-            return "Token already confirmed, block user?";
+            return "Token already confirmed";
+                    //Block user?
         }
         confirmationTokenService.setConfirmedAt(token, LocalDateTime.now().withYear(-10));       //кастиль
+                    //Maybe block email? with special code to make email valid again
         return "rejected";
     }
 
