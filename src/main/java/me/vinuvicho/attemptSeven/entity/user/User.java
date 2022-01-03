@@ -23,6 +23,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
     private Long id;
     private String username;
+
     private String email;
     private String password;
     @Enumerated(EnumType.STRING)
