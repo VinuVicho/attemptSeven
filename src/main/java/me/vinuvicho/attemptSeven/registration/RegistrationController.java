@@ -21,6 +21,6 @@ public class RegistrationController {
     }
     @GetMapping(path = "/reject")
     public String reject(@RequestParam("token") String token) {
-        return registrationService.confirmToken(token);
+        return registrationService.rejectToken(token);
     }
 }

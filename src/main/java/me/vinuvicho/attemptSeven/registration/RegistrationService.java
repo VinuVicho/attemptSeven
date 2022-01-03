@@ -34,9 +34,9 @@ public class RegistrationService {
         );
 
         String confirmLink = "http://localhost:8080/register/confirm?token=" + token.getToken();
-//        String rejectLink = "http://localhost:8080/register/reject?token=" + token.getToken();      //TODO: reject
+        String rejectLink = "http://localhost:8080/register/reject?token=" + token.getToken();
 
-        emailSender.send(request.getEmail(), buildEmail(request.getUsername(), confirmLink));
+        emailSender.send(request.getEmail(), buildEmail(request.getUsername(), confirmLink, rejectLink));
         return confirmLink;
     }
 
@@ -44,22 +44,31 @@ public class RegistrationService {
     public String confirmToken(String token) {
         ConfirmationToken confirmationToken = confirmationTokenService.getToken(token)
                 .orElseThrow(() -> new IllegalStateException("token not found"));
-        if (confirmationToken.getConfirmedAt() != null) {
+        if (confirmationToken.getConfirmedAt() != null &&
+                confirmationToken.getConfirmedAt().isAfter(LocalDateTime.now().withYear(666))) {    //кастиль, рік = 1, якщо час сплив, 10 - rejected
             throw new IllegalStateException("Email already confirmed");
         }
         if (confirmationToken.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new IllegalStateException("token expired");
+            throw new IllegalStateException("Token expired");
         }
         confirmationTokenService.setConfirmedAt(token, LocalDateTime.now());
         userService.enableUser(confirmationToken.getUser().getEmail());
         return "confirmed";
     }
 
-    public String rejectToken(String token) {        //TODO: make rejectToken
-        return "in development";
+    @Transactional
+    public String rejectToken(String token) {
+        ConfirmationToken rejectedToken = confirmationTokenService.getToken(token)
+                .orElseThrow(() -> new IllegalStateException("token not found"));
+        if (rejectedToken.getConfirmedAt() != null &&
+                rejectedToken.getConfirmedAt().isAfter(LocalDateTime.now().withYear(666))) {    //кастиль, рік = 1, якщо час сплив, 10 - rejected
+            return "Token already confirmed, block user?";
+        }
+        confirmationTokenService.setConfirmedAt(token, LocalDateTime.now().withYear(-10));       //кастиль
+        return "rejected";
     }
 
-    private String buildEmail(String name, String confirmationLink) {           //TODO make own email
+    private String buildEmail(String name, String confirmationLink, String rejectLink) {           //TODO make own email
         return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
                 "\n" +
                 "<span style=\"display:none;font-size:1px;color:#fff;max-height:0\"></span>\n" +
@@ -118,6 +127,7 @@ public class RegistrationService {
                 "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Hi " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> Thank you for registering. Please click on the below link to activate your account: </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a href=\"" + confirmationLink + "\">Activate Now</a> </p></blockquote>\n Link will expire in 15 minutes. <p>See you soon</p>" +
                 "        \n" +
                 "      </td>\n" +
+                "<p><a href=\"" + rejectLink + "\">if it wasn't you, press here</p>" +
                 "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
                 "    </tr>\n" +
                 "    <tr>\n" +
