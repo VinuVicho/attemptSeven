@@ -3,6 +3,7 @@ package me.vinuvicho.attemptSeven.entity.user;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import me.vinuvicho.attemptSeven.entity.post.Post;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -26,8 +28,27 @@ public class User implements UserDetails {
 
     private String email;
     private String password;
+
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
+
+    @Enumerated(EnumType.STRING)
+    private Language language = Language.UA;        //TODO: languages
+
+    @ToString.Exclude
+    @OneToMany(fetch = FetchType.LAZY)
+    private Set<Post> post = null;
+            //TODO: make another class for not-main info?
+    @ToString.Exclude
+    @OneToMany(fetch = FetchType.LAZY)
+    private Set<User> subscribedTo = null;
+
+    @ToString.Exclude
+    @OneToMany(fetch = FetchType.LAZY)
+    private Set<User> subscribers = null;          //TODO: check if possible to make custom sql from users_subscribed_to
+
+    private String profilePhoto = null;
+    private String about = null;
 
     private boolean locked = false;
     private boolean enabled = false;

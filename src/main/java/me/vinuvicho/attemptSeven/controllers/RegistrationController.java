@@ -1,6 +1,8 @@
-package me.vinuvicho.attemptSeven.registration;
+package me.vinuvicho.attemptSeven.controllers;
 
 import lombok.AllArgsConstructor;
+import me.vinuvicho.attemptSeven.registration.RegistrationRequest;
+import me.vinuvicho.attemptSeven.registration.RegistrationService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
