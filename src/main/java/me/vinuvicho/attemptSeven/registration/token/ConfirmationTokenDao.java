@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
+@Transactional          //TODO: check what is this
 public interface ConfirmationTokenDao extends JpaRepository<ConfirmationToken, Long> {
     Optional<ConfirmationToken> findByToken(String token);
     Optional<ConfirmationToken> findByUserAndTokenTypeAndConfirmedAt(User user, TokenType tokenType, LocalDateTime localDateTime);

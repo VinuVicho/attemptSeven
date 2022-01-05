@@ -33,6 +33,9 @@ public class User implements UserDetails {
     private UserRole userRole;
 
     @Enumerated(EnumType.STRING)
+    private ProfileType profileType;
+
+    @Enumerated(EnumType.STRING)
     private Language language = Language.UA;        //TODO: languages
 
     @ToString.Exclude
@@ -41,11 +44,11 @@ public class User implements UserDetails {
             //TODO: make another class for not-main info?
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
-    private Set<User> subscribedTo = null;
+    private Set<User> subscribedTo = null;          //TODO
 
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
-    private Set<User> subscribers = null;          //TODO: check if possible to make custom sql from users_subscribed_to
+    private Set<User> subscribers = null;           //TODO: check if possible to make custom sql from users_subscribed_to
 
     private String profilePhoto = null;
     private String about = null;
