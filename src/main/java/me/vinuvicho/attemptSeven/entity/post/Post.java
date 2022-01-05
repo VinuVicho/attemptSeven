@@ -3,6 +3,7 @@ package me.vinuvicho.attemptSeven.entity.post;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import me.vinuvicho.attemptSeven.entity.comment.Comment;
 import me.vinuvicho.attemptSeven.entity.user.User;
 
 import javax.persistence.*;
@@ -25,6 +26,9 @@ public class Post {
     private String text;
     private String image = null;
 
+    @ToString.Exclude
+    @OneToMany(fetch = FetchType.LAZY)
+    private Set<Comment> comments = null;
 
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
