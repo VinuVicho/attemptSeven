@@ -13,7 +13,7 @@ import java.util.Set;
 @Setter
 @Entity
 @ToString
-public class Comment {
+public class Comment {             //TODO: просто туду, тут купа
 
     @SequenceGenerator(name = "comment_sequence", sequenceName = "comment_sequence", allocationSize = 1)
     @Id

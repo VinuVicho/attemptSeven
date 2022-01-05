@@ -7,13 +7,14 @@ import me.vinuvicho.attemptSeven.entity.comment.Comment;
 import me.vinuvicho.attemptSeven.entity.user.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
 @Setter
 @Entity
 @ToString
-public class Post {
+public class Post {             //TODO: просто туду, тут купа
 
     @SequenceGenerator(name = "post_sequence", sequenceName = "post_sequence", allocationSize = 1)
     @Id
@@ -25,6 +26,7 @@ public class Post {
     private String title;
     private String text;
     private String image = null;
+    private LocalDateTime postedAt;
 
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)

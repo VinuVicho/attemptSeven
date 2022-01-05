@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
@@ -33,7 +34,7 @@ public class User implements UserDetails {
     private UserRole userRole;
 
     @Enumerated(EnumType.STRING)
-    private ProfileType profileType;
+    private ProfileType profileType;                //TODO: profile types
 
     @Enumerated(EnumType.STRING)
     private Language language = Language.UA;        //TODO: languages
@@ -48,10 +49,16 @@ public class User implements UserDetails {
 
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
+    private Set<Post> saved = null;                 //TODO
+
+    @ToString.Exclude
+    @OneToMany(fetch = FetchType.LAZY)
     private Set<User> subscribers = null;           //TODO: check if possible to make custom sql from users_subscribed_to
 
-    private String profilePhoto = null;
+    private String profilePhoto = null;             //TODO: prof pic and 'about'
     private String about = null;
+    private LocalDateTime createdAt = null;         //TODO: time when created
+    private LocalDateTime lastActivity = null;      //TODO: time when acted last time
 
     private boolean locked = false;
     private boolean enabled = false;
