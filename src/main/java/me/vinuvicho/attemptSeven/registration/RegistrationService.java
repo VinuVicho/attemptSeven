@@ -37,7 +37,10 @@ public class RegistrationService {
         String rejectLink = "http://localhost:8080/register/reject?token=" + token.getToken();
 
         emailSender.send(request.getEmail(), buildEmail(request.getUsername(), confirmLink, rejectLink));
-        return rejectLink;
+        /*FIXME: remove*/
+        confirmToken(token.getToken());
+        /*FIXME: remove*/
+        return confirmLink;
     }
 
     @Transactional
@@ -52,7 +55,9 @@ public class RegistrationService {
                 throw new IllegalStateException("Token already rejected");
             }
         }
-        if (confirmationToken.getExpiresAt().isBefore(LocalDateTime.now()) || confirmationToken.getConfirmedAt().getYear() == 1) {
+
+        if (confirmationToken.getExpiresAt().isBefore(LocalDateTime.now()) ||
+                confirmationToken.getConfirmedAt() != null && confirmationToken.getConfirmedAt().getYear() == 1) {
             throw new IllegalStateException("Token expired");
         }
         confirmationTokenService.setConfirmedAt(token, LocalDateTime.now());
