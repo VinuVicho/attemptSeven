@@ -13,8 +13,7 @@ public class UserManagementController {
 
     private static final List<User> USERS = Arrays.asList(
 //            new User(1, "VinuVicho"),
-//            new User(2, "Kodlon"),
-//            new User(3, "Vouzze")
+//            new User(2, "Kodlon")
     );
 
     @GetMapping

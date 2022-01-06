@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -20,6 +21,19 @@ public class UserService implements UserDetailsService {
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
     private final ConfirmationTokenService tokenService;
+
+    public User getUser(String credentials) {
+        try {
+            Long id = Long.valueOf(credentials);
+            @SuppressWarnings("UnnecessaryLocalVariable")                //не вибиває помилку якщо відразу ретирн
+            User user = userDao.getById(id);
+            return user;
+        } catch (Exception e) {
+            Optional<User> OUser =  userDao.findByUsername(credentials);
+            if (OUser.isPresent()) return OUser.get();
+            throw new IllegalStateException("No user found");
+        }
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

@@ -60,7 +60,9 @@ public class User implements UserDetails {
     private LocalDateTime createdAt = null;         //TODO: time when created
     private LocalDateTime lastActivity = null;      //TODO: time when acted last time
 
+    @ToString.Exclude
     private boolean locked = false;
+    @ToString.Exclude
     private boolean enabled = false;
 
     public User(String username, String email, String password, UserRole userRole) {
