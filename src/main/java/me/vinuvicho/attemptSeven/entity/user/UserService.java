@@ -11,8 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -33,6 +32,27 @@ public class UserService implements UserDetailsService {
             if (OUser.isPresent()) return OUser.get();
             throw new IllegalStateException("No user found");
         }
+    }
+
+    public void addFriend(User mainUser, User toFollow) {
+        Set<User> subscribedTo = new HashSet<>();
+        if (mainUser.getSubscribedTo() != null) {
+            subscribedTo = mainUser.getSubscribedTo();
+            if (subscribedTo.contains(toFollow))
+                throw new IllegalStateException("Already subscribed");
+        }
+        subscribedTo.add(toFollow);
+        mainUser.setSubscribedTo(subscribedTo);
+
+        Set<User> subscribers = new HashSet<>();
+        if (toFollow.getSubscribers() != null) {
+            subscribers = toFollow.getSubscribers();
+        }
+        subscribers.add(mainUser);
+        toFollow.setSubscribers(subscribers);
+
+        userDao.save(mainUser);
+        userDao.save(toFollow);
     }
 
     @Override

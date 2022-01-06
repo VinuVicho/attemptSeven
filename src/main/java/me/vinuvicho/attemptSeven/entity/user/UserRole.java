@@ -9,10 +9,10 @@ import java.util.stream.Collectors;
 
 import static me.vinuvicho.attemptSeven.security.ApplicationUserPermission.*;
 
-public enum UserRole {
+public enum UserRole {      //TODO: make normal roles
     GUEST(Sets.newHashSet()),
     BANNED(Sets.newHashSet()),
-    USER(Sets.newHashSet(POST_CREATE, POST_COMMENT)),
+    USER(Sets.newHashSet(POST_CREATE, POST_COMMENT, USER_ADD)),
     ADMIN(Sets.newHashSet(POST_EDIT, POST_COMMENT, POST_CREATE, USER_EDIT)),
     CREATOR(Sets.newHashSet(POST_EDIT, POST_COMMENT, POST_CREATE, USER_EDIT, ADMIN_EDIT));
     
