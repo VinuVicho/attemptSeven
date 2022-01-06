@@ -44,7 +44,7 @@ public class User implements UserDetails {
     private Set<Post> post = null;
             //TODO: make another class for not-main info?
     @ToString.Exclude
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<User> subscribedTo = null;          //TODO
 
     @ToString.Exclude
@@ -52,7 +52,7 @@ public class User implements UserDetails {
     private Set<Post> saved = null;                 //TODO
 
     @ToString.Exclude
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<User> subscribers = null;           //TODO: check if possible to make custom sql from users_subscribed_to
 
     private String profilePhoto = null;             //TODO: prof pic and 'about'
