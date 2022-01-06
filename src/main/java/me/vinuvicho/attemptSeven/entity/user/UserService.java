@@ -36,6 +36,10 @@ public class UserService implements UserDetailsService {
 
     public void addFriend(User mainUser, User toFollow) {
         Set<User> subscribedTo = new HashSet<>();
+        if ((mainUser.getBlockedUsers() != null && mainUser.getBlockedUsers().contains(toFollow)) ||        //check does it work
+                toFollow.getBlockedUsers() != null && toFollow.getBlockedUsers().contains(mainUser)) {
+            throw new IllegalStateException("User blocked");
+        }
         if (mainUser.getSubscribedTo() != null) {
             subscribedTo = mainUser.getSubscribedTo();
             if (subscribedTo.contains(toFollow))
