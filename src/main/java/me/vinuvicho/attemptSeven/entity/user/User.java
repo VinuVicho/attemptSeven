@@ -49,7 +49,7 @@ public class User implements UserDetails {
 
     @ToString.Exclude
     @ManyToMany(fetch = FetchType.LAZY)
-    private Set<User> blockedUsers = null;
+    private Set<User> blockedUsers = null;          //TODO
 
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
