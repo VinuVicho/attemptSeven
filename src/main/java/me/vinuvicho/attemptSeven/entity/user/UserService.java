@@ -34,6 +34,13 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    public boolean hasAccessToPosts(User from, User to) {
+        if (to.getProfileType() == ProfileType.PUBLIC || to.getProfileType() == ProfileType.PROTECTED) return true;
+        if (from == null) return false;
+        if (to.getBlockedUsers().contains(from)) return false;
+        return to.getSubscribers().contains(from);
+    }
+
     public void addFriend(User mainUser, User toFollow) {
         Set<User> subscribedTo = new HashSet<>();
         if ((mainUser.getBlockedUsers() != null && mainUser.getBlockedUsers().contains(toFollow)) ||        //check does it work

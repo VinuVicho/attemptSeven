@@ -4,5 +4,5 @@ public enum ProfileType {
     PUBLIC,
     PROTECTED,          //no messages allowed, only friends
     ONLY_SUBSCRIBERS,   //protected + only subs can see posts
-    HIDDEN              //only friends see
+    FRIENDS             //only friends can send messages + only_subscribed
 }

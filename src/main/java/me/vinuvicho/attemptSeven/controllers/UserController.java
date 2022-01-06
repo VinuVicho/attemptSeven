@@ -1,6 +1,7 @@
 package me.vinuvicho.attemptSeven.controllers;
 
 import lombok.AllArgsConstructor;
+import me.vinuvicho.attemptSeven.entity.user.ProfileType;
 import me.vinuvicho.attemptSeven.entity.user.User;
 import me.vinuvicho.attemptSeven.entity.user.UserDao;
 import me.vinuvicho.attemptSeven.entity.user.UserService;
@@ -42,6 +43,7 @@ public class UserController {
         if (!currentUser.equals(userToAdd)) {
             userService.addFriend(currentUser, userToAdd);
         }
+        else throw new IllegalStateException("Cannot add yourself");
         return "redirect:/user/" + credentials;
     }
 
@@ -53,13 +55,17 @@ public class UserController {
             if (foundUser == thisUser) {
                 return myAccount(thisUser);
             }
-        } catch (Exception ignored) {}
-
-        //user privacy check
-        return foundUser.toString();
+            if (!userService.hasAccessToPosts(thisUser, foundUser)) {
+                throw new IllegalStateException("User hidden");
+            }
+            return foundUser.toString();
+        } catch (Exception ignored) {
+            if (foundUser.getProfileType() == ProfileType.ONLY_SUBSCRIBERS || foundUser.getProfileType() == ProfileType.FRIENDS) {
+                throw new IllegalStateException("You have to log in");
+            }
+            return foundUser.toString();
+        }
     }
-
-
 
     public String myAccount(User user) {
         return "my account: " + user.toString();
