@@ -1,6 +1,9 @@
 package me.vinuvicho.attemptSeven.entity.user;
 
 import lombok.AllArgsConstructor;
+import me.vinuvicho.attemptSeven.entity.notification.Notification;
+import me.vinuvicho.attemptSeven.entity.notification.NotificationService;
+import me.vinuvicho.attemptSeven.entity.notification.NotificationType;
 import me.vinuvicho.attemptSeven.registration.token.ConfirmationToken;
 import me.vinuvicho.attemptSeven.registration.token.ConfirmationTokenService;
 import me.vinuvicho.attemptSeven.registration.token.TokenType;
@@ -20,6 +23,7 @@ public class UserService implements UserDetailsService {
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
     private final ConfirmationTokenService tokenService;
+    private final NotificationService notificationService;
 
     public User getUser(String credentials) {
         try {
@@ -47,23 +51,27 @@ public class UserService implements UserDetailsService {
                 toFollow.getBlockedUsers() != null && toFollow.getBlockedUsers().contains(mainUser)) {
             throw new IllegalStateException("User blocked");
         }
-        if (mainUser.getSubscribedTo() != null) {
-            subscribedTo = mainUser.getSubscribedTo();
-            if (subscribedTo.contains(toFollow))
-                throw new IllegalStateException("Already subscribed");
-        }
-        subscribedTo.add(toFollow);
-        mainUser.setSubscribedTo(subscribedTo);
+        if (toFollow.getProfileType() == ProfileType.ONLY_SUBSCRIBERS || toFollow.getProfileType() == ProfileType.FRIENDS) {
+            notificationService.createNotification(toFollow, mainUser, NotificationType.WANTS_TO_BECOME_SUBSCRIBER, null);
+        } else {
+            if (mainUser.getSubscribedTo() != null) {
+                subscribedTo = mainUser.getSubscribedTo();
+                if (subscribedTo.contains(toFollow))
+                    throw new IllegalStateException("Already subscribed");
+            }
+            subscribedTo.add(toFollow);
+            mainUser.setSubscribedTo(subscribedTo);
 
-        Set<User> subscribers = new HashSet<>();
-        if (toFollow.getSubscribers() != null) {
-            subscribers = toFollow.getSubscribers();
-        }
-        subscribers.add(mainUser);
-        toFollow.setSubscribers(subscribers);
+            Set<User> subscribers = new HashSet<>();
+            if (toFollow.getSubscribers() != null) {
+                subscribers = toFollow.getSubscribers();
+            }
+            subscribers.add(mainUser);
+            toFollow.setSubscribers(subscribers);
 
-        userDao.save(mainUser);
-        userDao.save(toFollow);
+            userDao.save(mainUser);
+            userDao.save(toFollow);
+        }
     }
 
     @Override

@@ -3,6 +3,7 @@ package me.vinuvicho.attemptSeven.entity.user;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import me.vinuvicho.attemptSeven.entity.notification.Notification;
 import me.vinuvicho.attemptSeven.entity.post.Post;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,6 +15,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 
+@SuppressWarnings("JpaDataSourceORMInspection")         //prop to delete (just remove warning)
 @Getter
 @Setter
 @ToString
@@ -42,6 +44,9 @@ public class User implements UserDetails {
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
     private Set<Post> post = null;
+    @ToString.Exclude
+    @OneToMany(fetch = FetchType.LAZY)
+    private Set<Notification> notifications = null;
             //TODO: make another class for not-main info?
     @ToString.Exclude
     @ManyToMany(fetch = FetchType.LAZY)
