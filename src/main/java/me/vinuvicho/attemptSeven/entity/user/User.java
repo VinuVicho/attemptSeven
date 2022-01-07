@@ -43,7 +43,7 @@ public class User implements UserDetails {
 
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
-    private Set<Post> post = null;
+    private Set<Post> posts = null;
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
     private Set<Notification> notifications = null;
