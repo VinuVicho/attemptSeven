@@ -36,7 +36,7 @@ public class User implements UserDetails {
     private UserRole userRole;
 
     @Enumerated(EnumType.STRING)
-    private ProfileType profileType;                //TODO: profile types
+    private ProfileType profileType = ProfileType.PUBLIC;
 
     @Enumerated(EnumType.STRING)
     private Language language = Language.UA;        //TODO: languages

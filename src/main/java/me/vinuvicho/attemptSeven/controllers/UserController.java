@@ -50,21 +50,15 @@ public class UserController {
     @GetMapping("/{credentials}")
     public String findUserByUsername(@PathVariable String credentials) {
         User foundUser = userService.getUser(credentials);
-        try {
-            User thisUser = getCurrentUser();
-            if (foundUser == thisUser) {
-                return myAccount(thisUser);
-            }
-            if (!userService.hasAccessToPosts(thisUser, foundUser)) {
-                throw new IllegalStateException("User hidden");
-            }
-            return foundUser.toString();
-        } catch (Exception ignored) {
-            if (foundUser.getProfileType() == ProfileType.ONLY_SUBSCRIBERS || foundUser.getProfileType() == ProfileType.FRIENDS) {
-                throw new IllegalStateException("You have to log in");
-            }
-            return foundUser.toString();
+        User thisUser = getCurrentUser();
+        if (foundUser.equals(thisUser)) {
+            return myAccount(thisUser);
         }
+        if (!userService.hasAccessToPosts(thisUser, foundUser)) {
+            throw new IllegalStateException("User hidden");
+        }
+        return foundUser.toString();
+
     }
 
     public String myAccount(User user) {
@@ -76,7 +70,7 @@ public class UserController {
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             return userService.getUser(((UserDetails) principal).getUsername());
         } catch (Exception e) {
-            throw new IllegalStateException("Guest");
+            return null;            //BAD TONE
         }
     }
 }

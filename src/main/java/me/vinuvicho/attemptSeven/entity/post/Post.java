@@ -25,8 +25,16 @@ public class Post {             //TODO: просто туду, тут купа
 
     private String title;
     private String text;
-    private String image = null;
+    private String image;
     private LocalDateTime postedAt;
+
+    public Post(User postedBy, String title, String text, String image, LocalDateTime postedAt) {
+        this.postedBy = postedBy;
+        this.title = title;
+        this.text = text;
+        this.image = image;
+        this.postedAt = postedAt;
+    }
 
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
@@ -39,4 +47,8 @@ public class Post {             //TODO: просто туду, тут купа
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
     private Set<User> disliked = null;
+
+    public Post() {
+
+    }
 }
