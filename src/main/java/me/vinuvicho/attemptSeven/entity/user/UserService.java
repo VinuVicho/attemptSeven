@@ -1,6 +1,9 @@
 package me.vinuvicho.attemptSeven.entity.user;
 
 import lombok.AllArgsConstructor;
+import me.vinuvicho.attemptSeven.entity.notification.Notification;
+import me.vinuvicho.attemptSeven.entity.notification.NotificationService;
+import me.vinuvicho.attemptSeven.entity.notification.NotificationType;
 import me.vinuvicho.attemptSeven.registration.token.ConfirmationToken;
 import me.vinuvicho.attemptSeven.registration.token.ConfirmationTokenService;
 import me.vinuvicho.attemptSeven.registration.token.TokenType;
@@ -11,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -20,6 +23,56 @@ public class UserService implements UserDetailsService {
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
     private final ConfirmationTokenService tokenService;
+    private final NotificationService notificationService;
+
+    public User getUser(String credentials) {
+        try {
+            Long id = Long.valueOf(credentials);
+            @SuppressWarnings("UnnecessaryLocalVariable")                //не вибиває помилку якщо відразу ретирн
+            User user = userDao.getById(id);
+            return user;
+        } catch (Exception e) {
+            Optional<User> OUser =  userDao.findByUsername(credentials);
+            if (OUser.isPresent()) return OUser.get();
+            throw new IllegalStateException("No user found");
+        }
+    }
+
+    public boolean hasAccessToPosts(User from, User to) {
+        if (to.getProfileType() == ProfileType.PUBLIC || to.getProfileType() == ProfileType.PROTECTED) return true;
+        if (from == null) return false;
+        if (to.getBlockedUsers().contains(from)) return false;
+        return to.getSubscribers().contains(from);
+    }
+
+    public void addFriend(User mainUser, User toFollow) {
+        Set<User> subscribedTo = new HashSet<>();
+        if ((mainUser.getBlockedUsers() != null && mainUser.getBlockedUsers().contains(toFollow)) ||        //check does it work
+                toFollow.getBlockedUsers() != null && toFollow.getBlockedUsers().contains(mainUser)) {
+            throw new IllegalStateException("User blocked");
+        }
+        if (toFollow.getProfileType() == ProfileType.ONLY_SUBSCRIBERS || toFollow.getProfileType() == ProfileType.FRIENDS) {
+            notificationService.createNotification(toFollow, mainUser, NotificationType.WANTS_TO_BECOME_SUBSCRIBER, null);
+        } else {
+            if (mainUser.getSubscribedTo() != null) {
+                subscribedTo = mainUser.getSubscribedTo();
+                if (subscribedTo.contains(toFollow))
+                    throw new IllegalStateException("Already subscribed");
+            }
+            subscribedTo.add(toFollow);
+            mainUser.setSubscribedTo(subscribedTo);
+
+            Set<User> subscribers = new HashSet<>();
+            if (toFollow.getSubscribers() != null) {
+                subscribers = toFollow.getSubscribers();
+            }
+            subscribers.add(mainUser);
+            toFollow.setSubscribers(subscribers);
+
+            userDao.save(mainUser);
+            userDao.save(toFollow);
+        }
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

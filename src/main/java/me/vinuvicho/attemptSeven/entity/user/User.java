@@ -3,16 +3,19 @@ package me.vinuvicho.attemptSeven.entity.user;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import me.vinuvicho.attemptSeven.entity.notification.Notification;
 import me.vinuvicho.attemptSeven.entity.post.Post;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 
+@SuppressWarnings("JpaDataSourceORMInspection")         //prop to delete (just remove warning)
 @Getter
 @Setter
 @ToString
@@ -33,24 +36,42 @@ public class User implements UserDetails {
     private UserRole userRole;
 
     @Enumerated(EnumType.STRING)
+    private ProfileType profileType = ProfileType.PUBLIC;
+
+    @Enumerated(EnumType.STRING)
     private Language language = Language.UA;        //TODO: languages
 
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
     private Set<Post> post = null;
-            //TODO: make another class for not-main info?
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
+    private Set<Notification> notifications = null;
+            //TODO: make another class for not-main info?
+    @ToString.Exclude
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<User> subscribedTo = null;
 
     @ToString.Exclude
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Set<User> blockedUsers = null;          //TODO
+
+    @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
-    private Set<User> subscribers = null;          //TODO: check if possible to make custom sql from users_subscribed_to
+    private Set<Post> saved = null;                 //TODO
 
-    private String profilePhoto = null;
+    @ToString.Exclude
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Set<User> subscribers = null;
+
+    private String profilePhoto = null;             //TODO: prof pic and 'about'
     private String about = null;
+    private LocalDateTime createdAt = null;         //TODO: time when created
+    private LocalDateTime lastActivity = null;      //TODO: time when acted last time
 
+    @ToString.Exclude
     private boolean locked = false;
+    @ToString.Exclude
     private boolean enabled = false;
 
     public User(String username, String email, String password, UserRole userRole) {

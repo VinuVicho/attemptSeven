@@ -6,19 +6,18 @@ import lombok.Setter;
 import lombok.ToString;
 import me.vinuvicho.attemptSeven.entity.user.User;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.Set;
 
 @Getter
 @Setter
 @Entity
 @ToString
-public class Comment {
+public class Comment {             //TODO: просто туду, тут купа
 
+    @SequenceGenerator(name = "comment_sequence", sequenceName = "comment_sequence", allocationSize = 1)
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_sequence")
     private Long id;
 
     private String title;
