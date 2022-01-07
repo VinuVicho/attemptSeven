@@ -2,7 +2,6 @@ package me.vinuvicho.attemptSeven.controllers;
 
 import lombok.AllArgsConstructor;
 import me.vinuvicho.attemptSeven.entity.post.Post;
-import me.vinuvicho.attemptSeven.entity.post.PostDao;
 import me.vinuvicho.attemptSeven.entity.post.PostRequest;
 import me.vinuvicho.attemptSeven.entity.post.PostService;
 import me.vinuvicho.attemptSeven.entity.user.User;
@@ -19,13 +18,12 @@ import java.util.Set;
 @RequestMapping(value = {"/post"})
 public class PostController {
 
-    private PostDao postDao;
     private UserService userService;
     private PostService postService;
 
     @GetMapping("/all")
     public String getAllPosts() {
-        List<Post> posts = postDao.findAll();
+        List<Post> posts = postService.getAllPosts();
         return posts.toString();
     }
 

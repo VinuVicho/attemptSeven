@@ -1,9 +1,7 @@
 package me.vinuvicho.attemptSeven.controllers;
 
 import lombok.AllArgsConstructor;
-import me.vinuvicho.attemptSeven.entity.user.ProfileType;
 import me.vinuvicho.attemptSeven.entity.user.User;
-import me.vinuvicho.attemptSeven.entity.user.UserDao;
 import me.vinuvicho.attemptSeven.entity.user.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,7 +19,6 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final UserDao userDao;
 
     @GetMapping("/me")
     public String myAccount() {         //not sure if that works
@@ -31,7 +28,7 @@ public class UserController {
 
     @GetMapping("/all")
     public String getAllUsers() {
-        List<User> users = userDao.findAll();
+        List<User> users = userService.getAllUsers();
         return users.toString();
     }
 

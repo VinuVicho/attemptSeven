@@ -45,6 +45,10 @@ public class UserService implements UserDetailsService {
         return to.getSubscribers().contains(from);
     }
 
+    public List<User> getAllUsers() {
+        return userDao.findAll();
+    }
+
     public void addFriend(User mainUser, User toFollow) {
         Set<User> subscribedTo = new HashSet<>();
         if ((mainUser.getBlockedUsers() != null && mainUser.getBlockedUsers().contains(toFollow)) ||        //check does it work

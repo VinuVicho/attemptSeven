@@ -6,6 +6,7 @@ import me.vinuvicho.attemptSeven.entity.user.User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -52,6 +53,10 @@ public class PostService {
         post.setLiked(likedBy);                     //TODO: check if really need this
         post.setDisliked(dislikedBy);               //TODO: check if really need this
         postDao.save(post);
+    }
+
+    public List<Post> getAllPosts() {
+        return postDao.findAll();
     }
 
     public Post savePost(User postedBy, PostRequest postRequest) {
