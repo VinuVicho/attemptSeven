@@ -74,7 +74,7 @@ public class UserController {
         return "my account: " + user.toString();
     }
 
-    public User getCurrentUser() {
+    public User getCurrentUser() {              //TODO: move to UserService
         try {
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             return userService.getUser(((UserDetails) principal).getUsername());
