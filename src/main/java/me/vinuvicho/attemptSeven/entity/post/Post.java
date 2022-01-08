@@ -14,7 +14,7 @@ import java.util.Set;
 @Setter
 @Entity
 @ToString
-public class Post {             //TODO: просто туду, тут купа
+public class Post {
 
     @SequenceGenerator(name = "post_sequence", sequenceName = "post_sequence", allocationSize = 1)
     @Id

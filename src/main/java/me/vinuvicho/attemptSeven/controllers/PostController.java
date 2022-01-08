@@ -2,6 +2,7 @@ package me.vinuvicho.attemptSeven.controllers;
 
 import lombok.AllArgsConstructor;
 import me.vinuvicho.attemptSeven.entity.post.Post;
+import me.vinuvicho.attemptSeven.entity.post.PostComparator;
 import me.vinuvicho.attemptSeven.entity.post.PostRequest;
 import me.vinuvicho.attemptSeven.entity.post.PostService;
 import me.vinuvicho.attemptSeven.entity.user.User;
@@ -10,8 +11,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 @RestController
 @AllArgsConstructor
@@ -33,9 +36,23 @@ public class PostController {
         return posts.toString();
     }
 
-    @GetMapping("/")
+    @GetMapping("/new")
     public String createPost() {
         return "creating post";
+    }
+
+    @GetMapping("/")
+    public String mainPostPage() {
+        User user = getCurrentUser();
+        if (user == null || user.getSubscribedTo() == null) {
+            return postService.getAllPosts().toString();
+        }
+        Set<Post> posts = new TreeSet<>(new PostComparator());
+        for (User u: user.getSubscribedTo()) {
+            posts.addAll(u.getPosts());
+        }
+
+        return posts.toString();
     }
 
 //    @PreAuthorize("hasAuthority('post:create')")
