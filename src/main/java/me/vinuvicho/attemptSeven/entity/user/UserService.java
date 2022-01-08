@@ -54,7 +54,7 @@ public class UserService implements UserDetailsService {
         Set<User> subscribers = new HashSet<>();
 
         if (mainUser.getSubscribedTo() != null) {       //removing if already
-            subscribedTo = mainUser.getSubscribedTo();
+            subscribedTo = mainUser.getSubscribedTo();  //TODO: remove notification
             if (subscribedTo.contains(toFollow)) {
                 subscribedTo.remove(toFollow);
                 subscribers = toFollow.getSubscribers();

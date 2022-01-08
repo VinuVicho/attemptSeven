@@ -41,8 +41,23 @@ public class NotificationHtml {
         }
     }
 
-    public NotificationHtml(List<Notification> notificationList) {      //TODO
+    public NotificationHtml(List<Notification> notificationList, NotificationType type) {      //TODO
+        StringBuilder buildId = new StringBuilder();                                            //check if works normally
+        for (Notification n: notificationList) {
+            buildId.append(n.getId()).append("-");
+        }
+        buildId.deleteCharAt(buildId.length());
+        id = buildId.toString();
 
+        if (type == NEW_SUBSCRIBER) {
+            title = "New subscribers";
+            text = "<a href=\"/notification/subscribed/" + id + "\">" +
+                    notificationList.size() + " new subscribers</a>";
+            return;
+        }
+        title = "New Messages";                             //check does it work correctly
+        text = "<a href=\"/chat/\"> You have " + notificationList.stream().mapToInt(Notification::getNumber).sum() + "messages" +
+                notificationList.size() + " chats</a>";
     }
 
     private String getTimeToNow(LocalDateTime time) {       //TODO: make normal time creation
