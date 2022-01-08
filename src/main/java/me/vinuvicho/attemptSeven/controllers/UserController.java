@@ -39,8 +39,20 @@ public class UserController {
         User userToAdd = userService.getUser(credentials);
         if (!currentUser.equals(userToAdd)) {
             userService.addFriend(currentUser, userToAdd);
-        }
-        else throw new IllegalStateException("Cannot add yourself");
+        } else
+            throw new IllegalStateException("Cannot add yourself");
+        return "redirect:/user/" + credentials;
+    }
+
+    @PreAuthorize("hasAuthority('user:add')")
+    @GetMapping("/{credentials}/block")
+    public String blockUser(@PathVariable String credentials) {
+        User currentUser = getCurrentUser();
+        User userToBlock = userService.getUser(credentials);
+        if (!currentUser.equals(userToBlock)) {
+            userService.blockUser(currentUser, userToBlock);
+        } else
+            throw new IllegalStateException("Cannot block yourself");
         return "redirect:/user/" + credentials;
     }
 

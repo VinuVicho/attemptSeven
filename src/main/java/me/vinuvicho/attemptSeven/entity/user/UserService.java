@@ -51,6 +51,22 @@ public class UserService implements UserDetailsService {
 
     public void addFriend(User mainUser, User toFollow) {
         Set<User> subscribedTo = new HashSet<>();
+        Set<User> subscribers = new HashSet<>();
+
+        if (mainUser.getSubscribedTo() != null) {       //removing if already
+            subscribedTo = mainUser.getSubscribedTo();
+            if (subscribedTo.contains(toFollow)) {
+                subscribedTo.remove(toFollow);
+                subscribers = toFollow.getSubscribers();
+                subscribers.remove(mainUser);
+                mainUser.setSubscribedTo(subscribedTo);         //prob to delete
+                toFollow.setSubscribers(subscribers);           //prob to delete
+                userDao.save(mainUser);
+                userDao.save(toFollow);
+                return;
+            }
+        }
+
         if ((mainUser.getBlockedUsers() != null && mainUser.getBlockedUsers().contains(toFollow)) ||        //check does it work
                 toFollow.getBlockedUsers() != null && toFollow.getBlockedUsers().contains(mainUser)) {
             throw new IllegalStateException("User blocked");
@@ -58,15 +74,8 @@ public class UserService implements UserDetailsService {
         if (toFollow.getProfileType() == ProfileType.ONLY_SUBSCRIBERS || toFollow.getProfileType() == ProfileType.FRIENDS) {
             notificationService.createNotification(toFollow, mainUser, NotificationType.WANTS_TO_BECOME_SUBSCRIBER, null);
         } else {
-            if (mainUser.getSubscribedTo() != null) {
-                subscribedTo = mainUser.getSubscribedTo();
-                if (subscribedTo.contains(toFollow))
-                    throw new IllegalStateException("Already subscribed");
-            }
             subscribedTo.add(toFollow);
             mainUser.setSubscribedTo(subscribedTo);
-
-            Set<User> subscribers = new HashSet<>();
             if (toFollow.getSubscribers() != null) {
                 subscribers = toFollow.getSubscribers();
             }
@@ -76,6 +85,25 @@ public class UserService implements UserDetailsService {
             userDao.save(mainUser);
             userDao.save(toFollow);
         }
+    }
+
+    public void blockUser(User mainUser, User toBlock) {
+        Set<User> blockedUsers = new HashSet<>();
+        if (mainUser.getBlockedUsers() != null) {
+            blockedUsers = mainUser.getBlockedUsers();
+        }
+        if (blockedUsers.contains(toBlock)) {
+            blockedUsers.remove(toBlock);
+        } else {
+            blockedUsers.add(toBlock);
+            mainUser.getSubscribedTo().remove(toBlock);         //not sure that works
+            toBlock.getSubscribedTo().remove(mainUser);
+            mainUser.getSubscribers().remove(toBlock);
+            toBlock.getSubscribers().remove(mainUser);
+        }
+        mainUser.setBlockedUsers(blockedUsers);
+        userDao.save(mainUser);
+        userDao.save(toBlock);
     }
 
     @Override
