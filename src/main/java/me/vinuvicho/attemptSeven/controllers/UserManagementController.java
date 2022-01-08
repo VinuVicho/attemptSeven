@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("management/user")
-public class UserManagementController {
+public class UserManagementController {         //TODO: DELETE
 
     private static final List<User> USERS = Arrays.asList(
 //            new User(1, "VinuVicho"),
