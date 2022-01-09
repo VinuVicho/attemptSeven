@@ -35,13 +35,13 @@ public class NotificationHtml {
         }
         if (n.getNotificationType() == NEW_MESSAGE) {
             title = username + " messaged you";
-            text = "<a href=\"/user/" + username + "\">" + username + "</a> " +     //TODO: make link to chat
+            text = "<a href=\"/user/" + username + "\">" + username + "</a> " +                 //TODO: make link to chat
                     "sent " + n.getNumber() + " messages to you " +
                     "<small>" + getTimeToNow(n.getTime()) + "</small>";
         }
     }
 
-    public NotificationHtml(List<Notification> notificationList, NotificationType type) {      //TODO
+    public NotificationHtml(List<Notification> notificationList, NotificationType type) {
         StringBuilder buildId = new StringBuilder();                                            //check if works normally
         for (Notification n: notificationList) {
             buildId.append(n.getId()).append("-");
@@ -51,7 +51,7 @@ public class NotificationHtml {
 
         if (type == NEW_SUBSCRIBER) {
             title = "New subscribers";
-            text = "<a href=\"/notification/subscribed/" + id + "\">" +
+            text = "<a href=\"/notification/subscribed\">" +
                     notificationList.size() + " new subscribers</a>";
             return;
         }

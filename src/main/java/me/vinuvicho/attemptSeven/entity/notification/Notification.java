@@ -30,7 +30,7 @@ public class Notification {
 
     @Enumerated(EnumType.STRING)
     private NotificationType notificationType;
-    private boolean closed = false;
+    private boolean closed = false;                 //TODO: make delete, not closed
     private LocalDateTime time;
 
     public Notification(User user, User additionalUser, NotificationType notificationType, Integer number, LocalDateTime time) {

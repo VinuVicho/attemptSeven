@@ -8,6 +8,7 @@ import me.vinuvicho.attemptSeven.entity.user.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,6 +29,32 @@ public class NotificationController {
         return notificationService.getUserNotificationHtml(user).toString();
     }
 
+    @GetMapping("/{id}/reject")
+    public String rejectNotification(@PathVariable String id) {
+        User user = getCurrentUser();
+        notificationService.rejectNotification(user, Long.valueOf(id));
+        return "rejected?";
+    }
+
+    @GetMapping("/{id}/block")
+    public String blockUserNotification(@PathVariable String id) {
+        User user = getCurrentUser();
+        notificationService.blockUserNotification(user, Long.valueOf(id));
+        return "blocked?";
+    }
+
+    @GetMapping("/{id}/apply")
+    public String applyUserNotification(@PathVariable String id) {
+        User user = getCurrentUser();
+        notificationService.applyUserNotification(user, Long.valueOf(id));
+        return "applied?";
+    }
+
+    @GetMapping("/subscribed")
+    public String subscribedUsers() {
+        User user = getCurrentUser();
+        return notificationService.getUserNewSubscribers(user).toString();
+    }
 
     public User getCurrentUser() {
         try {
