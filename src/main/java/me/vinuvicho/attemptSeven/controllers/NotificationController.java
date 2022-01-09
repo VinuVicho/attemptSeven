@@ -2,6 +2,7 @@ package me.vinuvicho.attemptSeven.controllers;
 
 import lombok.AllArgsConstructor;
 import me.vinuvicho.attemptSeven.entity.notification.Notification;
+import me.vinuvicho.attemptSeven.entity.notification.NotificationService;
 import me.vinuvicho.attemptSeven.entity.user.User;
 import me.vinuvicho.attemptSeven.entity.user.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class NotificationController {
 
     private UserService userService;
+    private NotificationService notificationService;
 
     @GetMapping("/all")
     public String getNotifications() {
@@ -23,7 +25,7 @@ public class NotificationController {
         if (user == null) {
             return "NOT LOGGED IN";
         }
-        return "TODO";          //TODO: notification return
+        return notificationService.getUserNotificationHtml(user).toString();
     }
 
 
