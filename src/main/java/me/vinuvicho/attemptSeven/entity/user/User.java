@@ -39,11 +39,11 @@ public class User implements UserDetails {
     private ProfileType profileType = ProfileType.PUBLIC;
 
     @Enumerated(EnumType.STRING)
-    private Language language = Language.UA;        //TODO: languages
+    private Language language = Language.EN;        //TODO: languages
 
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
-    private Set<Post> post = null;
+    private Set<Post> posts = null;
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
     private Set<Notification> notifications = null;
@@ -68,6 +68,7 @@ public class User implements UserDetails {
     private String about = null;
     private LocalDateTime createdAt = null;         //TODO: time when created
     private LocalDateTime lastActivity = null;      //TODO: time when acted last time
+    private boolean collapseMessages = false;
 
     @ToString.Exclude
     private boolean locked = false;

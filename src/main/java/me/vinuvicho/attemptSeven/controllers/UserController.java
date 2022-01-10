@@ -1,9 +1,7 @@
 package me.vinuvicho.attemptSeven.controllers;
 
 import lombok.AllArgsConstructor;
-import me.vinuvicho.attemptSeven.entity.user.ProfileType;
 import me.vinuvicho.attemptSeven.entity.user.User;
-import me.vinuvicho.attemptSeven.entity.user.UserDao;
 import me.vinuvicho.attemptSeven.entity.user.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,7 +19,6 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final UserDao userDao;
 
     @GetMapping("/me")
     public String myAccount() {         //not sure if that works
@@ -31,7 +28,7 @@ public class UserController {
 
     @GetMapping("/all")
     public String getAllUsers() {
-        List<User> users = userDao.findAll();
+        List<User> users = userService.getAllUsers();
         return users.toString();
     }
 
@@ -42,8 +39,20 @@ public class UserController {
         User userToAdd = userService.getUser(credentials);
         if (!currentUser.equals(userToAdd)) {
             userService.addFriend(currentUser, userToAdd);
-        }
-        else throw new IllegalStateException("Cannot add yourself");
+        } else
+            throw new IllegalStateException("Cannot add yourself");
+        return "redirect:/user/" + credentials;
+    }
+
+    @PreAuthorize("hasAuthority('user:add')")
+    @GetMapping("/{credentials}/block")
+    public String blockUser(@PathVariable String credentials) {
+        User currentUser = getCurrentUser();
+        User userToBlock = userService.getUser(credentials);
+        if (!currentUser.equals(userToBlock)) {
+            userService.blockUser(currentUser, userToBlock);
+        } else
+            throw new IllegalStateException("Cannot block yourself");
         return "redirect:/user/" + credentials;
     }
 
@@ -65,7 +74,7 @@ public class UserController {
         return "my account: " + user.toString();
     }
 
-    public User getCurrentUser() {
+    public User getCurrentUser() {              //TODO: move to UserService
         try {
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             return userService.getUser(((UserDetails) principal).getUsername());

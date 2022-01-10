@@ -50,7 +50,6 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 //    @Override
 //    @Bean
 //    protected UserDetailsService userDetailsService() {
-//
 //        UserDetails userVinuVicho = User.builder()
 //                .username("VinuVicho")
 //                .password(passwordEncoder.encode("1"))

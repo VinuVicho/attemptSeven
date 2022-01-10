@@ -7,6 +7,7 @@ import lombok.ToString;
 import me.vinuvicho.attemptSeven.entity.user.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
@@ -29,13 +30,15 @@ public class Notification {
 
     @Enumerated(EnumType.STRING)
     private NotificationType notificationType;
-    private boolean closed = false;
+    private boolean closed = false;                 //TODO: make delete, not closed
+    private LocalDateTime time;
 
-    public Notification(User user, User additionalUser, NotificationType notificationType, Integer number) {
+    public Notification(User user, User additionalUser, NotificationType notificationType, Integer number, LocalDateTime time) {
         this.user = user;
         this.additionalUser = additionalUser;
         this.notificationType = notificationType;
         this.number = number;
+        this.time = time;
     }
 
     private Integer number;
