@@ -1,7 +1,6 @@
 package me.vinuvicho.attemptSeven.controllers;
 
 import lombok.AllArgsConstructor;
-import me.vinuvicho.attemptSeven.entity.notification.Notification;
 import me.vinuvicho.attemptSeven.entity.notification.NotificationService;
 import me.vinuvicho.attemptSeven.entity.user.User;
 import me.vinuvicho.attemptSeven.entity.user.UserService;
