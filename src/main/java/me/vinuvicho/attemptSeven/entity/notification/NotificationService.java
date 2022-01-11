@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class NotificationService {
     private NotificationDao notificationDao;
     private UserDao userDao;
-    private UserService userService;
+    private UserService userService;            //FIXME: make primitive userService for small userServices
 
     public void blockUserNotification(User user, Long id) {
         Notification notification = notificationDao.getById(id);

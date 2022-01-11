@@ -22,7 +22,7 @@ public class UserService implements UserDetailsService {
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
     private final ConfirmationTokenService tokenService;
-    private final NotificationService notificationService;
+//    private final NotificationService notificationService;
 
     public User getUser(String credentials) {
         try {
@@ -71,7 +71,8 @@ public class UserService implements UserDetailsService {
             throw new IllegalStateException("User blocked");
         }
         if (toFollow.getProfileType() == ProfileType.ONLY_SUBSCRIBERS || toFollow.getProfileType() == ProfileType.FRIENDS) {
-            notificationService.createNotification(toFollow, mainUser, NotificationType.WANTS_TO_BECOME_SUBSCRIBER, null);
+//            notificationService.createNotification(toFollow, mainUser, NotificationType.WANTS_TO_BECOME_SUBSCRIBER, null);
+//            TODO: SOMEHOW RULE THIS
         } else {
             subscribedTo.add(toFollow);
             mainUser.setSubscribedTo(subscribedTo);
@@ -114,7 +115,8 @@ public class UserService implements UserDetailsService {
             throw new IllegalStateException("User blocked");
         }
         if (toFollow.getProfileType() == ProfileType.ONLY_SUBSCRIBERS || toFollow.getProfileType() == ProfileType.FRIENDS) {
-            notificationService.createNotification(toFollow, mainUser, NotificationType.WANTS_TO_BECOME_SUBSCRIBER, null);
+//            notificationService.createNotification(toFollow, mainUser, NotificationType.WANTS_TO_BECOME_SUBSCRIBER, null);
+//            TODO: SOMEHOW RULE THIS
         } else {
             subscribedTo.add(toFollow);
             mainUser.setSubscribedTo(subscribedTo);
