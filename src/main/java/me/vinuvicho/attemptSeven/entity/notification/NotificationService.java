@@ -3,7 +3,7 @@ package me.vinuvicho.attemptSeven.entity.notification;
 import lombok.AllArgsConstructor;
 import me.vinuvicho.attemptSeven.entity.user.User;
 import me.vinuvicho.attemptSeven.entity.user.UserDao;
-import me.vinuvicho.attemptSeven.entity.user.UserService;
+import me.vinuvicho.attemptSeven.entity.user.UserServiceSimple;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class NotificationService {
     private NotificationDao notificationDao;
     private UserDao userDao;
-    private UserService userService;            //FIXME: make primitive userService for small userServices
+    private UserServiceSimple userService;
 
     public void blockUserNotification(User user, Long id) {
         Notification notification = notificationDao.getById(id);
