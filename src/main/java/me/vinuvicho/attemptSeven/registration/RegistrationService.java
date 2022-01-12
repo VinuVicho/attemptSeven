@@ -21,7 +21,6 @@ public class RegistrationService {
     private final EmailSender emailSender;
 
     public String register(RegistrationRequest request) {
-        System.out.println(request.toString());
         if (!new Validate().validateEmail(request.getEmail())) {
             throw new IllegalStateException("Email not valid");
         }
