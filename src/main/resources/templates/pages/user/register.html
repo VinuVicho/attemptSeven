@@ -9,12 +9,12 @@
 </header>
 <body>
 
-<form th:method="POST" th:action="@{/registration}" th:object="${registrationRequest}">
+<form th:method="POST" th:action="@{/register}" th:object="${registrationRequest}">
     <label for="username">Ведіть Username: </label>
     <input type="text" th:field="*{username}" id="username">
     <br>
     <br>
-    <label for="email">Enter E-mail:</label>
+    <label for="email">Enter e-mail:</label>
     <input type="text" th:field="*{email}" id="email">
     <br>
     <br>

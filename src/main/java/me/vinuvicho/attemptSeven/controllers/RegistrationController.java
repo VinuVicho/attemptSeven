@@ -15,13 +15,13 @@ public class RegistrationController {
 
     private final RegistrationService registrationService;
 
-    @PostMapping
-    public String register(@RequestBody RegistrationRequest request) {
+    @PostMapping()
+    @ResponseBody               //to send non-html
+    public String register(@ModelAttribute RegistrationRequest request) {       //@ModelAttribute isn't necessary
         return registrationService.register(request);
     }
 
     @GetMapping()
-//    @ResponseBody               //to send non-html
     public String registerPage(Model model) {
         model.addAttribute("registrationRequest", new RegistrationRequest());
         return "pages/user/register";
