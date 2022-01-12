@@ -41,10 +41,10 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/management/**").hasAnyRole(ADMIN.name(), HALF_ADMIN.name())
                 .anyRequest().authenticated().and()
                 .formLogin()                                                                                //форма зверху -- httpBasic
-                .loginPage("/login").permitAll()
-//                .defaultSuccessUrl("/posts", true)                                                        //redirect
-                .and().rememberMe().and()
-                .logout().logoutSuccessUrl("/");
+                .loginPage("/login").permitAll().and()
+                .rememberMe().and()
+                .logout().logoutSuccessUrl("/")
+        ;
     }
 
 //    @Override
