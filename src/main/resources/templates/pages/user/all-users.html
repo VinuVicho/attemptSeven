@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All users</title>
+</head>
+<header>
+<!--    menu here-->
+</header>
+<body>
+<!--TODO: add search user-->
+<div th:each="user : ${users}">
+    <a th:href="@{/user/{credentials}(credentials=${user.getUsername()})}" th:text="${user.getUsername()}"></a>
+</div>
+</body>
+</html>

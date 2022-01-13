@@ -6,14 +6,15 @@ import me.vinuvicho.attemptSeven.entity.user.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@RestController
+@Controller
 @AllArgsConstructor
 @RequestMapping(value = {"/user"})
 public class UserController {
@@ -27,9 +28,10 @@ public class UserController {
     }
 
     @GetMapping("/all")
-    public String getAllUsers() {
+    public String getAllUsers(Model model) {
         List<User> users = userService.getAllUsers();
-        return users.toString();
+        model.addAttribute("users", users);
+        return "pages/user/all-users";
     }
 
     @PreAuthorize("hasAuthority('user:add')")
