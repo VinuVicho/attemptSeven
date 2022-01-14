@@ -2,15 +2,14 @@ package me.vinuvicho.attemptSeven.controllers;
 
 import lombok.AllArgsConstructor;
 import me.vinuvicho.attemptSeven.entity.user.User;
+import me.vinuvicho.attemptSeven.entity.user.UserRequest;
 import me.vinuvicho.attemptSeven.entity.user.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -58,8 +57,22 @@ public class UserController {
         return "redirect:/user/" + credentials;
     }
 
+    @GetMapping("/{credentials}/subscribers")
+    @ResponseBody           //TODO: make page for this
+    public String getSubscribers(@PathVariable String credentials, Model model) {
+        User user = userService.getUser(credentials);
+        return user.getSubscribers().toString();
+    }
+
+    @GetMapping("/{credentials}/subscribed")
+    @ResponseBody           //TODO: make page for this
+    public String getSubscribedTo(@PathVariable String credentials, Model model) {
+        User user = userService.getUser(credentials);
+        return user.getSubscribedTo().toString();
+    }
+
     @GetMapping("/{credentials}")
-    public String findUserByUsername(@PathVariable String credentials) {
+    public String findUserByUsername(@PathVariable String credentials, Model model) {
         User foundUser = userService.getUser(credentials);
         User thisUser = getCurrentUser();
         if (foundUser.equals(thisUser)) {
@@ -68,7 +81,10 @@ public class UserController {
         if (!userService.hasAccessToPosts(thisUser, foundUser)) {
             throw new IllegalStateException("User hidden");
         }
-        return foundUser.toString();
+        UserRequest userRequest = new UserRequest(foundUser);
+        System.out.println(userRequest);
+        model.addAttribute("foundUser", new UserRequest(foundUser));     //TODO: make special class for html
+        return "pages/user/profile";
 
     }
 

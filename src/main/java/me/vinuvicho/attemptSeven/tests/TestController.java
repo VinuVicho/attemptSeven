@@ -1,14 +1,16 @@
-package me.vinuvicho.attemptSeven.controllers;
+package me.vinuvicho.attemptSeven.tests;
 
 import lombok.AllArgsConstructor;
 import me.vinuvicho.attemptSeven.entity.user.User;
 import me.vinuvicho.attemptSeven.entity.user.UserService;
 import me.vinuvicho.attemptSeven.registration.token.ConfirmationTokenDao;
-import me.vinuvicho.attemptSeven.registration.token.ConfirmationTokenService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/test")
@@ -16,12 +18,27 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     private final UserService userService;
+    private final TestService testService;
     private final ConfirmationTokenDao tokenDao;
+
 
     @DeleteMapping
     public String testDelete() {
         tokenDao.deleteById(1L);
         return "posts";
+    }
+
+    @GetMapping("/2")
+    public String testOneToMany() {
+        Set<User> test = testService.getTestEntity(1L).getUsers();
+        return test.toString();
+    }
+    @GetMapping("/a2")
+    public void beforeTestOneToMany() {
+        Set<User> users = new HashSet<User>();
+        users.add(userService.getUser("Kodlon"));
+        TestEntity test = new TestEntity(users);
+        testService.save(test);
     }
 
     @GetMapping("/1")
