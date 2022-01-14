@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -30,14 +32,14 @@ public class TestController {
 
     @GetMapping("/2")
     public String testOneToMany() {
-        Set<User> test = testService.getTestEntity(1L).getUsers();
+        List<User> test = testService.getTestEntity("testName").getUsers();
         return test.toString();
     }
     @GetMapping("/a2")
     public void beforeTestOneToMany() {
-        Set<User> users = new HashSet<User>();
+        List<User> users = new ArrayList<>();
         users.add(userService.getUser("Kodlon"));
-        TestEntity test = new TestEntity(users);
+        TestEntity test = new TestEntity("testName", users);
         testService.save(test);
     }
 

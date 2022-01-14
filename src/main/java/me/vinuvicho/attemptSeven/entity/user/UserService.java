@@ -77,6 +77,19 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    public User getFullUser(String credentials) {
+        try {
+            Long id = Long.valueOf(credentials);
+            @SuppressWarnings("UnnecessaryLocalVariable")                //не вибиває помилку якщо відразу ретирн
+            User user = userDao.findByIdAndEnabled(id, true);
+            return user;
+        } catch (Exception e) {
+            Optional<User> OUser =  userDao.findByUsernameAndEnabled(credentials, true);
+            if (OUser.isPresent()) return OUser.get();
+            throw new IllegalStateException("No user found");
+        }
+    }
+
     public void blockUser(User mainUser, User toBlock) {
         Set<User> blockedUsers = new HashSet<>();
         if (mainUser.getBlockedUsers() != null) {

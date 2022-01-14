@@ -73,17 +73,17 @@ public class UserController {
 
     @GetMapping("/{credentials}")
     public String findUserByUsername(@PathVariable String credentials, Model model) {
-        User foundUser = userService.getUser(credentials);
+        User foundUser = userService.getFullUser(credentials);
         User thisUser = getCurrentUser();
-        if (foundUser.equals(thisUser)) {
-            return myAccount(thisUser);
+        if (thisUser != null && foundUser.getId().equals(thisUser.getId())) {
+            return myAccount(foundUser);
         }
         if (!userService.hasAccessToPosts(thisUser, foundUser)) {
             throw new IllegalStateException("User hidden");
         }
         UserRequest userRequest = new UserRequest(foundUser);
         System.out.println(userRequest);
-        model.addAttribute("foundUser", new UserRequest(foundUser));     //TODO: make special class for html
+        model.addAttribute("foundUser", new UserRequest(foundUser));
         return "pages/user/profile";
 
     }
