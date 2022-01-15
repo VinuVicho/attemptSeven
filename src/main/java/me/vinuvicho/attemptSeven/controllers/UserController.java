@@ -48,6 +48,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('user:add')")
     @GetMapping("/{credentials}/block")
     public String blockUser(@PathVariable String credentials) {
+        System.out.println("blocking");
         User currentUser = getFullCurrentUser();
         User userToBlock = userService.getFullUser(credentials);
         if (!currentUser.equals(userToBlock)) {
@@ -81,12 +82,11 @@ public class UserController {
             }
             model.addAttribute("currentUser", thisUser);
         }
-//        else model.addAttribute("currentUser", null);
+//        else model.addAttribute("currentUser", null);                     //по дефолту нулл
+        model.addAttribute("foundUser", foundUser);
         if (!userService.hasAccessToPosts(thisUser, foundUser)) {
             return "pages/user/hidden-profile";
         }
-
-        model.addAttribute("foundUser", foundUser);
         return "pages/user/profile";
     }
 

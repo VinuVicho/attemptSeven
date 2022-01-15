@@ -12,7 +12,7 @@
     </a>
 </div>
 <p th:text="${foundUser.getId()} + ' ' + ${foundUser.getUsername()}"></p>
-<p th:text="'Bio: ' + ${foundUser.getAbout()}"></p>
+<p th:text="${foundUser.getAbout() == null} ? 'No bio yet' : 'Bio: ' + ${foundUser.getAbout()}"></p>
 <br>
 <a th:href="@{user/{credentials}/subscribers(credentials=${foundUser.getUsername()})}">
     <p th:text="${foundUser.getSubscribers().size()} + ' subscribers'"></p></a>
@@ -20,12 +20,13 @@
     <p th:text="${foundUser.getSubscribedTo().size()} + ' subscribed'"></p></a>
 
 <div th:unless="${currentUser == null}">
-    <a th:href="@{{credentials}/to-friends(credentials=${foundUser.getUsername()})}">
-        <p th:text="${currentUser.getSubscribedTo().contains(foundUser)} ? 'UnSubscribe' : 'Subscribe'"></p>
-    </a>
-    <a th:href="@{user/{credentials}/block(credentials=${foundUser.getUsername()})}">
-        <div th:unless="${currentUser.getBlockedUsers().contains(foundUser)}" th:text="'Block'"></div>
-        <div th:if="${currentUser.getBlockedUsers().contains(foundUser)}" th:text="'Unblock'"></div>
+    <div th:unless="${currentUser.getBlockedUsers().contains(foundUser)}">
+        <a th:href="@{{credentials}/to-friends(credentials=${foundUser.getUsername()})}">
+            <p th:text="${currentUser.getSubscribedTo().contains(foundUser)} ? 'UnSubscribe' : 'Subscribe'"></p>
+        </a>
+    </div>
+    <a th:href="@{{credentials}/block(credentials=${foundUser.getUsername()})}">
+        <p th:text="${currentUser.getBlockedUsers().contains(foundUser)} ? 'Unblock' : 'Block'"></p>
     </a>
 </div>
 
