@@ -22,7 +22,7 @@ public class UserService implements UserDetailsService {
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
     private final ConfirmationTokenService tokenService;
-//    private final NotificationService notificationService;
+    private final NotificationService notificationService;
 
     public User getUser(String credentials) {
         try {
@@ -71,63 +71,22 @@ public class UserService implements UserDetailsService {
             throw new IllegalStateException("User blocked");
         }
         if (toFollow.getProfileType() == ProfileType.ONLY_SUBSCRIBERS || toFollow.getProfileType() == ProfileType.FRIENDS) {
-//            notificationService.createNotification(toFollow, mainUser, NotificationType.WANTS_TO_BECOME_SUBSCRIBER, null);
-//            TODO: SOMEHOW RULE THIS
+            notificationService.createNotification(toFollow, mainUser, NotificationType.WANTS_TO_BECOME_SUBSCRIBER, null);
         } else {
-            subscribedTo.add(toFollow);
-            mainUser.setSubscribedTo(subscribedTo);
-            if (toFollow.getSubscribers() != null) {
-                subscribers = toFollow.getSubscribers();
-            }
-            subscribers.add(mainUser);
-            toFollow.setSubscribers(subscribers);
-
-            userDao.save(mainUser);
-            userDao.save(toFollow);
+            UserServiceSimple.justAddFriend(mainUser, toFollow, subscribedTo, subscribers, userDao);
         }
     }
 
-    public void onlyBlockUser(User mainUser, User toBlock) {
-        Set<User> blockedUsers = new HashSet<>();
-        if (mainUser.getBlockedUsers() != null) {
-            blockedUsers = mainUser.getBlockedUsers();
-        }
-        blockedUsers.add(toBlock);
-        mainUser.getSubscribedTo().remove(toBlock);         //not sure if that works
-        toBlock.getSubscribedTo().remove(mainUser);
-        mainUser.getSubscribers().remove(toBlock);
-        toBlock.getSubscribers().remove(mainUser);
-        mainUser.setBlockedUsers(blockedUsers);
-        userDao.save(mainUser);
-        userDao.save(toBlock);
-    }
-
-    public void onlyAddUser(User mainUser, User toFollow) {
-
-        Set<User> subscribedTo = new HashSet<>();
-        Set<User> subscribers = new HashSet<>();
-        if (mainUser.getSubscribedTo() != null) {
-            subscribedTo = mainUser.getSubscribedTo();
-        }
-                    //TODO: make another method to cleanup code
-        if ((mainUser.getBlockedUsers() != null && mainUser.getBlockedUsers().contains(toFollow)) ||        //check does it work
-                toFollow.getBlockedUsers() != null && toFollow.getBlockedUsers().contains(mainUser)) {
-            throw new IllegalStateException("User blocked");
-        }
-        if (toFollow.getProfileType() == ProfileType.ONLY_SUBSCRIBERS || toFollow.getProfileType() == ProfileType.FRIENDS) {
-//            notificationService.createNotification(toFollow, mainUser, NotificationType.WANTS_TO_BECOME_SUBSCRIBER, null);
-//            TODO: SOMEHOW RULE THIS
-        } else {
-            subscribedTo.add(toFollow);
-            mainUser.setSubscribedTo(subscribedTo);
-            if (toFollow.getSubscribers() != null) {
-                subscribers = toFollow.getSubscribers();
-            }
-            subscribers.add(mainUser);
-            toFollow.setSubscribers(subscribers);
-
-            userDao.save(mainUser);
-            userDao.save(toFollow);
+    public User getFullUser(String credentials) {
+        try {
+            Long id = Long.valueOf(credentials);
+            @SuppressWarnings("UnnecessaryLocalVariable")                //не вибиває помилку якщо відразу ретирн
+            User user = userDao.findByIdAndEnabled(id, true);
+            return user;
+        } catch (Exception e) {
+            Optional<User> OUser =  userDao.findByUsernameAndEnabled(credentials, true);
+            if (OUser.isPresent()) return OUser.get();
+            throw new IllegalStateException("No user found");
         }
     }
 
@@ -193,4 +152,6 @@ public class UserService implements UserDetailsService {
     public void enableUser(String email) {
         userDao.enableUser(email);
     }
+
+
 }

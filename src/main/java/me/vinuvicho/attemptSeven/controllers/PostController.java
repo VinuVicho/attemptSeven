@@ -73,7 +73,7 @@ public class PostController {
     public String likePost(@PathVariable Long postId) {
         User user = getCurrentUser();
         if (user == null) throw new IllegalStateException("not logged id");
-        Post post = postService.checkPostAvailability(getCurrentUser(), postId);
+        Post post = postService.checkPostAvailability(user, postId);
         postService.likePost(post, user);
         return post.toString();
     }
@@ -81,9 +81,23 @@ public class PostController {
     public String dislikePost(@PathVariable Long postId) {
         User user = getCurrentUser();
         if (user == null) throw new IllegalStateException("not logged id");
-        Post post = postService.checkPostAvailability(getCurrentUser(), postId);
+        Post post = postService.checkPostAvailability(user, postId);
         postService.dislikePost(post, user);
         return post.toString();
+    }
+
+    @GetMapping("/{postId}/disliked")
+    public String disliked(@PathVariable Long postId) {
+        User user = getCurrentUser();
+        Post post = postService.checkPostAvailability(user, postId);
+        return post.getDisliked().toString();
+    }
+
+    @GetMapping("/{postId}/liked")
+    public String liked(@PathVariable Long postId) {
+        User user = getCurrentUser();
+        Post post = postService.checkPostAvailability(user, postId);
+        return post.getLiked().toString();
     }
 
     public User getCurrentUser() {

@@ -3,6 +3,7 @@ server:
     include-message: always
     include-binding-errors: always
 
+
 spring:
   datasource:
     url: #DB link jdbc:postgresql://localhost:5432/****
@@ -14,8 +15,11 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
+#        format_sql: true                   #not necessary
   #    show-sql: true
+
+    open-in-view: false                     #to remove warning, prob will cause error with db in future
+
 
   mail:
     host: smtp.gmail.com

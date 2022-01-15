@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 
-@SuppressWarnings("JpaDataSourceORMInspection")         //prop to delete (just remove warning)
+@SuppressWarnings("JpaDataSourceORMInspection")         //prob to delete (just remove warning)
 @Getter
 @Setter
 @ToString
@@ -47,14 +47,14 @@ public class User implements UserDetails {
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
     private Set<Notification> notifications = null;
-            //TODO: make another class for not-main info?
+
     @ToString.Exclude
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<User> subscribedTo = null;
 
     @ToString.Exclude
     @ManyToMany(fetch = FetchType.LAZY)
-    private Set<User> blockedUsers = null;          //TODO
+    private Set<User> blockedUsers = null;
 
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
@@ -64,7 +64,7 @@ public class User implements UserDetails {
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<User> subscribers = null;
 
-    private String profilePhoto = null;             //TODO: prof pic and 'about'
+    private String profilePhoto = null;
     private String about = null;
     private LocalDateTime createdAt = null;         //TODO: time when created
     private LocalDateTime lastActivity = null;      //TODO: time when acted last time

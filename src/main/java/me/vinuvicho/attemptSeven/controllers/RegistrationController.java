@@ -15,13 +15,15 @@ public class RegistrationController {
 
     private final RegistrationService registrationService;
 
-    @PostMapping
-    public String register(@RequestBody RegistrationRequest request) {
-        return registrationService.register(request);
+    @PostMapping()
+//    @ResponseBody               //to send non-html
+    public String register(@ModelAttribute RegistrationRequest request, Model model) {       //@ModelAttribute isn't necessary
+        String token = registrationService.register(request);
+        model.addAttribute("token", token);
+        return "pages/basic/check-email";
     }
 
     @GetMapping()
-//    @ResponseBody               //to send non-html
     public String registerPage(Model model) {
         model.addAttribute("registrationRequest", new RegistrationRequest());
         return "pages/user/register";
@@ -29,10 +31,12 @@ public class RegistrationController {
 
     @GetMapping(path = "/confirm")
     public String confirm(@RequestParam("token") String token) {
-        return registrationService.confirmToken(token);
+        registrationService.confirmToken(token);
+        return "redirect:/login";
     }
     @GetMapping(path = "/reject")
     public String reject(@RequestParam("token") String token) {
-        return registrationService.rejectToken(token);
+        registrationService.rejectToken(token);
+        return "pages/basic/token-rejected";
     }
 }

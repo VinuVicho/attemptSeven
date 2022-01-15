@@ -35,16 +35,17 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()          //disabled for now  TODO: make csrf
                 .disable()
                 .authorizeRequests()
-                .antMatchers("/**", "index", "/css/*", "/scripts/test.js", "/logout", "/register/**").permitAll()   //можна без аутентифікації
-                .antMatchers("/user/**").hasRole(ADMIN.name())                                   //Тільки Адміни мають доступ
+                .antMatchers("index", "/css/*", "/scripts/test.js", "/logout", "/register/**").permitAll()   //можна без аутентифікації
+//                .antMatchers("/user/**").hasRole(ADMIN.name())                                   //Тільки Адміни мають доступ
 //                .antMatchers(HttpMethod.DELETE, "/management/**").hasAuthority(USER_EDIT.getPermission()) //замінив на @PreAuthorise
 //                .antMatchers("/management/**").hasAnyRole(ADMIN.name(), HALF_ADMIN.name())
-                .anyRequest().authenticated().and()
+//                .anyRequest().authenticated()
+                .and()
                 .formLogin()                                                                                //форма зверху -- httpBasic
-                .loginPage("/login").permitAll()
-//                .defaultSuccessUrl("/posts", true)                                                        //redirect
-                .and().rememberMe().and()
-                .logout().logoutSuccessUrl("/");
+                .loginPage("/login").permitAll().and()
+                .rememberMe().and()
+                .logout().logoutSuccessUrl("/")
+        ;
     }
 
 //    @Override
