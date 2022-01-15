@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--suppress RequiredAttributes -->
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -13,6 +14,8 @@
 </div>
 <p th:text="${currentUser.getId()} + ' ' + ${currentUser.getUsername()}"></p>
 <p th:text="${currentUser.getAbout() == null} ? 'No bio yet' : 'Bio: ' + ${currentUser.getAbout()}"></p>
+<p th:text="'Created at: ' + ${foundUser.getCreatedAt().toLocalDate()}"></p>
+<!--<p th:text="'Last activity: ' + 'Under development'"></p> TODO-->
 <br>
 
 <form th:method="GET" th:action="@{edit}">
@@ -28,20 +31,20 @@
     <p th:text="${currentUser.getBlockedUsers().size()} + ' blocked'"></p></a>
 
 <hr>
-<div th:each="post : ${currentUser.getPosts()}">
-    <a th:href="@{/post/{id}(id=${post.getId()})}">
-        <p th:text="${post.getTitle()}"></p>
-        <div th:unless="${(post.getImage().equals(''))}">
-            <img th:src="${post.getImage()}" alt="no" height="500">
-        </div>
-        <p>
-            <a th:href="@{/{postId}/liked(postId=${post.getId()})}" th:text="${post.getLiked().size()} + ' Likes '"></a>
-            <a th:href="@{/{id}/disliked(id=${post.getId()})}" th:text="${post.getDisliked().size()} + ' Dislikes'"></a>
-        </p>
-        <p th:text="${post.getComments().size()} + ' Comments'"></p>
-    </a>
-    <hr>
-</div>
+<!--<div th:each="post : ${currentUser.getPosts()}">-->
+<!--    <a th:href="@{/post/{id}(id=${post.getId()})}">-->
+<!--        <p th:text="${post.getTitle()}"></p>-->
+<!--        <div th:unless="${(post.getImage().equals(''))}">-->
+<!--            <img th:src="${post.getImage()}" alt="no" height="500">-->
+<!--        </div>-->
+<!--        <p>-->
+<!--            <a th:href="@{/{postId}/liked(postId=${post.getId()})}" th:text="${post.getLiked().size()} + ' Likes '"></a>-->
+<!--            <a th:href="@{/{id}/disliked(id=${post.getId()})}" th:text="${post.getDisliked().size()} + ' Dislikes'"></a>-->
+<!--        </p>-->
+<!--        <p th:text="${post.getComments().size()} + ' Comments'"></p>-->
+<!--    </a>-->
+<!--    <hr>-->
+<!--</div>-->
 
 </body>
 </html>
