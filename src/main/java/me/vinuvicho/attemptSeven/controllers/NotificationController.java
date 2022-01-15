@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import me.vinuvicho.attemptSeven.entity.notification.NotificationService;
 import me.vinuvicho.attemptSeven.entity.user.User;
 import me.vinuvicho.attemptSeven.entity.user.UserService;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +19,7 @@ public class NotificationController {
 
     @GetMapping("/all")
     public String getNotifications() {
-        User user = getCurrentUser();
+        User user = userService.getCurrentUser();
         if (user == null) {
             return "NOT LOGGED IN";
         }
@@ -30,37 +28,28 @@ public class NotificationController {
 
     @GetMapping("/{id}/reject")
     public String rejectNotification(@PathVariable String id) {
-        User user = getCurrentUser();
+        User user = userService.getCurrentUser();
         notificationService.rejectNotification(user, Long.valueOf(id));
         return "rejected?";
     }
 
     @GetMapping("/{id}/block")
     public String blockUserNotification(@PathVariable String id) {
-        User user = getCurrentUser();
+        User user = userService.getCurrentUser();
         notificationService.blockUserNotification(user, Long.valueOf(id));
         return "blocked?";
     }
 
     @GetMapping("/{id}/apply")
     public String applyUserNotification(@PathVariable String id) {
-        User user = getCurrentUser();
+        User user = userService.getCurrentUser();
         notificationService.applyUserNotification(user, Long.valueOf(id));
         return "applied?";
     }
 
     @GetMapping("/subscribed")
     public String subscribedUsers() {
-        User user = getCurrentUser();
+        User user = userService.getCurrentUser();
         return notificationService.getUserNewSubscribers(user).toString();
-    }
-
-    public User getCurrentUser() {
-        try {
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return userService.getUser(((UserDetails) principal).getUsername());
-        } catch (Exception e) {
-            return null;            //BAD TONE
-        }
     }
 }

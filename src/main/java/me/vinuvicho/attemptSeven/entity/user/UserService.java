@@ -7,6 +7,7 @@ import me.vinuvicho.attemptSeven.registration.token.ConfirmationToken;
 import me.vinuvicho.attemptSeven.registration.token.ConfirmationTokenService;
 import me.vinuvicho.attemptSeven.registration.token.TokenType;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -153,6 +154,26 @@ public class UserService implements UserDetailsService {
 
     public void enableUser(String email) {
         userDao.enableUser(email);
+    }
+
+    public User getCurrentUser() {              //TODO: move to UserService
+        try {
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return getUser(((UserDetails) principal).getUsername());
+        } catch (Exception e) {
+            return null;            //BAD TONE
+        }
+    }
+    public User getFullCurrentUser() {              //TODO: move to UserService
+        try {
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            User user = getFullUser(((UserDetails) principal).getUsername());
+            System.out.println(user.getUsername() +
+                    " Тут мало б бути зчитування даних користувача типу остання активність");
+            return user;
+        } catch (Exception e) {
+            return null;            //BAD TONE
+        }
     }
 
     public void updateUser(User user, UserRequest request) {

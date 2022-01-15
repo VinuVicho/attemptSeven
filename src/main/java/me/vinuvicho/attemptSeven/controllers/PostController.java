@@ -7,8 +7,6 @@ import me.vinuvicho.attemptSeven.entity.post.PostRequest;
 import me.vinuvicho.attemptSeven.entity.post.PostService;
 import me.vinuvicho.attemptSeven.entity.user.User;
 import me.vinuvicho.attemptSeven.entity.user.UserService;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
@@ -32,7 +30,7 @@ public class PostController {
 
     @GetMapping("/my")
     public String myPosts() {
-        Set<Post> posts = getCurrentUser().getPosts();
+        Set<Post> posts = userService.getCurrentUser().getPosts();
         return posts.toString();
     }
 
@@ -43,7 +41,7 @@ public class PostController {
 
     @GetMapping("/")
     public String mainPostPage() {
-        User user = getCurrentUser();
+        User user = userService.getCurrentUser();
         if (user == null || user.getSubscribedTo() == null) {
             return postService.getAllPosts().toString();
         }
@@ -66,12 +64,12 @@ public class PostController {
 
     @GetMapping("/{postId}")
     public String getPost(@PathVariable Long postId) {
-        Post post = postService.checkPostAvailability(getCurrentUser(), postId);
+        Post post = postService.checkPostAvailability(userService.getCurrentUser(), postId);
         return post.toString();
     }
     @GetMapping("/{postId}/like")
     public String likePost(@PathVariable Long postId) {
-        User user = getCurrentUser();
+        User user = userService.getCurrentUser();
         if (user == null) throw new IllegalStateException("not logged id");
         Post post = postService.checkPostAvailability(user, postId);
         postService.likePost(post, user);
@@ -79,7 +77,7 @@ public class PostController {
     }
     @GetMapping("/{postId}/dislike")
     public String dislikePost(@PathVariable Long postId) {
-        User user = getCurrentUser();
+        User user = userService.getCurrentUser();
         if (user == null) throw new IllegalStateException("not logged id");
         Post post = postService.checkPostAvailability(user, postId);
         postService.dislikePost(post, user);
@@ -88,24 +86,15 @@ public class PostController {
 
     @GetMapping("/{postId}/disliked")
     public String disliked(@PathVariable Long postId) {
-        User user = getCurrentUser();
+        User user = userService.getCurrentUser();
         Post post = postService.checkPostAvailability(user, postId);
         return post.getDisliked().toString();
     }
 
     @GetMapping("/{postId}/liked")
     public String liked(@PathVariable Long postId) {
-        User user = getCurrentUser();
+        User user = userService.getCurrentUser();
         Post post = postService.checkPostAvailability(user, postId);
         return post.getLiked().toString();
-    }
-
-    public User getCurrentUser() {
-        try {
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return userService.getUser(((UserDetails) principal).getUsername());
-        } catch (Exception e) {
-            return null;
-        }
     }
 }
