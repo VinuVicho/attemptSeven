@@ -19,6 +19,16 @@
 <a th:href="@{user/{credentials}/subscribed(credentials=${foundUser.getUsername()})}">
     <p th:text="${foundUser.getSubscribedTo().size()} + ' subscribed'"></p></a>
 
+<div th:unless="${currentUser == null}">
+    <a th:href="@{{credentials}/to-friends(credentials=${foundUser.getUsername()})}">
+        <p th:text="${currentUser.getSubscribedTo().contains(foundUser)} ? 'UnSubscribe' : 'Subscribe'"></p>
+    </a>
+    <a th:href="@{user/{credentials}/block(credentials=${foundUser.getUsername()})}">
+        <div th:unless="${currentUser.getBlockedUsers().contains(foundUser)}" th:text="'Block'"></div>
+        <div th:if="${currentUser.getBlockedUsers().contains(foundUser)}" th:text="'Unblock'"></div>
+    </a>
+</div>
+
 <div th:each="post : ${foundUser.getPosts()}">
     <a th:href="@{/post/{id}(id=${post.getId()})}">
         <p th:text="${post.getTitle()}"></p>

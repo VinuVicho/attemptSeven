@@ -36,8 +36,8 @@ public class UserController {
     @PreAuthorize("hasAuthority('user:add')")
     @GetMapping("/{credentials}/to-friends")
     public String addFriend(@PathVariable String credentials) {
-        User currentUser = getCurrentUser();
-        User userToAdd = userService.getUser(credentials);
+        User currentUser = getFullCurrentUser();
+        User userToAdd = userService.getFullUser(credentials);
         if (!currentUser.equals(userToAdd)) {
             userService.addFriend(currentUser, userToAdd);
         } else
@@ -48,8 +48,8 @@ public class UserController {
     @PreAuthorize("hasAuthority('user:add')")
     @GetMapping("/{credentials}/block")
     public String blockUser(@PathVariable String credentials) {
-        User currentUser = getCurrentUser();
-        User userToBlock = userService.getUser(credentials);
+        User currentUser = getFullCurrentUser();
+        User userToBlock = userService.getFullUser(credentials);
         if (!currentUser.equals(userToBlock)) {
             userService.blockUser(currentUser, userToBlock);
         } else
@@ -74,18 +74,20 @@ public class UserController {
     @GetMapping("/{credentials}")
     public String findUserByUsername(@PathVariable String credentials, Model model) {
         User foundUser = userService.getFullUser(credentials);
-        User thisUser = getCurrentUser();
-        if (thisUser != null && foundUser.getId().equals(thisUser.getId())) {
-            return myAccount(foundUser);
+        User thisUser = getFullCurrentUser();
+        if (thisUser != null) {
+            if (foundUser.getId().equals(thisUser.getId())) {
+                return myAccount(foundUser);
+            }
+            model.addAttribute("currentUser", thisUser);
         }
+//        else model.addAttribute("currentUser", null);
         if (!userService.hasAccessToPosts(thisUser, foundUser)) {
-            throw new IllegalStateException("User hidden");
+            return "pages/user/hidden-profile";
         }
-        UserRequest userRequest = new UserRequest(foundUser);
-        System.out.println(userRequest);
-        model.addAttribute("foundUser", new UserRequest(foundUser));
-        return "pages/user/profile";
 
+        model.addAttribute("foundUser", foundUser);
+        return "pages/user/profile";
     }
 
     public String myAccount(User user) {
@@ -96,6 +98,14 @@ public class UserController {
         try {
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             return userService.getUser(((UserDetails) principal).getUsername());
+        } catch (Exception e) {
+            return null;            //BAD TONE
+        }
+    }
+    public User getFullCurrentUser() {              //TODO: move to UserService
+        try {
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return userService.getFullUser(((UserDetails) principal).getUsername());
         } catch (Exception e) {
             return null;            //BAD TONE
         }

@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 
-@SuppressWarnings("JpaDataSourceORMInspection")         //prop to delete (just remove warning)
+@SuppressWarnings("JpaDataSourceORMInspection")         //prob to delete (just remove warning)
 @Getter
 @Setter
 @ToString
@@ -129,10 +129,5 @@ public class User implements UserDetails {
         return getClass().hashCode();
     }
     public User() {}
-
-    public Set<User> getSubscribers() {
-        System.out.println(subscribers);
-        return subscribers;
-    }
 }
 

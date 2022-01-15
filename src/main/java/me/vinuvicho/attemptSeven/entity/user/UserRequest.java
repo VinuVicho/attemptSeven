@@ -12,7 +12,7 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-public class UserRequest {
+public class UserRequest {              //TODO: prob to remove
     private Long id;
     private String email;
     private String about;
