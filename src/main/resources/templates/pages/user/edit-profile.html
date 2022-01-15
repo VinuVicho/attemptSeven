@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit</title>
+</head>
+<body>
+Edit your profile:
+<br>
+<p th:text="${userRequest.getId()} + ' ' + ${userRequest.getUsername()}"></p>
+<p th:text="'Your email: ' + ${userRequest.getEmail()}"></p>
+<form th:method="POST" th:action="@{edit}" th:object="${userRequest}">
+<!--TODO: make update, not post-->
+    <label for="profilePhoto">Enter link to photo: </label>
+    <input id="profilePhoto" th:field="*{profilePhoto}" type="text">
+<!--    TODO: make about profile type, etc.-->
+    <label for="about">About: </label>
+    <input id="about" th:field="*{about}" type="text">
+    <br>
+    <input type="submit" value="Submit">
+</form>
+</body>
+</html>

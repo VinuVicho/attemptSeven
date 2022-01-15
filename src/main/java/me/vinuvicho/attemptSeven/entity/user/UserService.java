@@ -6,6 +6,7 @@ import me.vinuvicho.attemptSeven.entity.notification.NotificationType;
 import me.vinuvicho.attemptSeven.registration.token.ConfirmationToken;
 import me.vinuvicho.attemptSeven.registration.token.ConfirmationTokenService;
 import me.vinuvicho.attemptSeven.registration.token.TokenType;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -80,6 +81,7 @@ public class UserService implements UserDetailsService {
     public User getFullUser(String credentials) {
         try {
             Long id = Long.valueOf(credentials);
+            System.out.println(id);
             @SuppressWarnings("UnnecessaryLocalVariable")                //не вибиває помилку якщо відразу ретирн
             User user = userDao.findByIdAndEnabled(id, true);
             return user;
@@ -153,5 +155,9 @@ public class UserService implements UserDetailsService {
         userDao.enableUser(email);
     }
 
-
+    public void updateUser(User user, UserRequest request) {
+        user.updateUser(request);
+        userDao.save(user);
+//        return user;          //not using for now
+    }
 }

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import me.vinuvicho.attemptSeven.entity.user.User;
 import me.vinuvicho.attemptSeven.entity.user.UserRequest;
 import me.vinuvicho.attemptSeven.entity.user.UserService;
+import me.vinuvicho.attemptSeven.registration.RegistrationRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -72,15 +73,16 @@ public class UserController {
         return user.getSubscribedTo().toString();
     }
 
+
     @GetMapping("/{credentials}")
-    public String findUserByUsername(@PathVariable String credentials, Model model) {
+    public String findUser(@PathVariable String credentials, Model model) {
         User foundUser = userService.getFullUser(credentials);
         User thisUser = getFullCurrentUser();
         if (thisUser != null) {
-            if (foundUser.getId().equals(thisUser.getId())) {
-                return myAccount(foundUser);
-            }
             model.addAttribute("currentUser", thisUser);
+            if (foundUser.getId().equals(thisUser.getId())) {
+                return "pages/user/my-profile";
+            }
         }
 //        else model.addAttribute("currentUser", null);                     //по дефолту нулл
         model.addAttribute("foundUser", foundUser);
@@ -90,9 +92,24 @@ public class UserController {
         return "pages/user/profile";
     }
 
-    public String myAccount(User user) {
-        return "my account: " + user.toString();
+    @GetMapping("/edit")                            //TODO: make admins able to change another user data
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HALF_ADMIN', 'ROLE_USER')")
+    public String getEditPage(Model model) {
+        User user = getCurrentUser();
+        UserRequest userRequest = new UserRequest(user);
+        model.addAttribute("userRequest", userRequest);
+        return "pages/user/edit-profile";
     }
+
+
+    @PostMapping("/edit")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HALF_ADMIN', 'ROLE_USER')")
+    public String updateUserProfile(@ModelAttribute UserRequest request) {
+        User user = getFullCurrentUser();
+        userService.updateUser(user, request);
+        return "redirect:/user/" + user.getUsername();
+    }
+
 
     public User getCurrentUser() {              //TODO: move to UserService
         try {
@@ -105,7 +122,9 @@ public class UserController {
     public User getFullCurrentUser() {              //TODO: move to UserService
         try {
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return userService.getFullUser(((UserDetails) principal).getUsername());
+            User user = userService.getFullUser(((UserDetails) principal).getUsername());
+//            userService.userAction(user);
+            return user;
         } catch (Exception e) {
             return null;            //BAD TONE
         }

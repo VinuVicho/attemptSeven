@@ -17,7 +17,7 @@ public interface UserDao extends JpaRepository<User, Long> {
 
     @EntityGraph(attributePaths = {"posts", "subscribedTo", "blockedUsers", "subscribers"})
     Optional<User> findByUsernameAndEnabled(String username, boolean enabled);          //fully load
-    @EntityGraph(attributePaths = "users")
+    @EntityGraph(attributePaths = {"posts", "subscribedTo", "blockedUsers", "subscribers"})
     User findByIdAndEnabled(Long id, boolean enabled);          //fully load
 
     @Transactional
