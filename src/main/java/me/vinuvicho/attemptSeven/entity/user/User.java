@@ -82,6 +82,7 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.userRole = userRole;
+        this.createdAt = LocalDateTime.now();
     }
 
     @Override
