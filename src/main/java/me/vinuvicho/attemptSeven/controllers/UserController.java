@@ -59,19 +59,20 @@ public class UserController {
     }
 
     @GetMapping("/{credentials}/subscribers")
-    @ResponseBody           //TODO: make page for this
     public String getSubscribers(@PathVariable String credentials, Model model) {
-        User user = userService.getUser(credentials);
-        return user.getSubscribers().toString();
+        User user = userService.getFullUser(credentials);
+        model.addAttribute("users", user.getSubscribers());
+        model.addAttribute("whatIsShown", "Users, that subscribed to " + user.getUsername() + ':');
+        return "pages/user/all-users";
     }
 
     @GetMapping("/{credentials}/subscribed")
-    @ResponseBody           //TODO: make page for this
     public String getSubscribedTo(@PathVariable String credentials, Model model) {
-        User user = userService.getUser(credentials);
-        return user.getSubscribedTo().toString();
+        User user = userService.getFullUser(credentials);
+        model.addAttribute("users", user.getSubscribedTo());
+        model.addAttribute("whatIsShown", user.getUsername() + " subscribed to: ");
+        return "pages/user/all-users";
     }
-
 
     @GetMapping("/{credentials}")
     public String findUser(@PathVariable String credentials, Model model) {
