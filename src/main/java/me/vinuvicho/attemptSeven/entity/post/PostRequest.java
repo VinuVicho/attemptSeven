@@ -1,15 +1,13 @@
 package me.vinuvicho.attemptSeven.entity.post;
 
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
+@Setter
 public class PostRequest {
     private String title;
     private String text;

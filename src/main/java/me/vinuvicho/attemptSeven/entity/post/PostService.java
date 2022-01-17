@@ -35,13 +35,14 @@ public class PostService {
     }
 
     public Post getPost(User user, Long id) {
-        Post post = postDao.getById(id);
+        Post post = postDao.getPostById(id);
         if (post.getPostedBy().getProfileType() == ProfileType.PUBLIC
                 || post.getPostedBy().getProfileType() == ProfileType.PROTECTED)
             return post;
         if (user != null && post.getPostedBy().getBlockedUsers().contains(user)) {
             if (user.getSubscribedTo().contains(post.getPostedBy())) return post;
         }
+        if (Objects.equals(user, post.getPostedBy())) return post;
         throw new IllegalStateException("No access");
     }
 
@@ -49,6 +50,7 @@ public class PostService {
         if (post.getPostedBy().getProfileType() == ProfileType.PUBLIC
                 || post.getPostedBy().getProfileType() == ProfileType.PROTECTED)
             return true;
+        if (post.getPostedBy().equals(user)) return true;
         if (user != null && post.getPostedBy().getBlockedUsers().contains(user)) {
             return user.getSubscribedTo().contains(post.getPostedBy());
         }

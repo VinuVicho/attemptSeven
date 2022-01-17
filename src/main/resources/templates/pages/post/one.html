@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${post.getTitle()}"></title>
+</head>
+<header>
+    <a href="/login">Login</a>
+</header>
+<body>
+
+<p th:text="${post.getTitle()}"></p>
+<div th:unless="${(post.getImage() == null)}">
+    <img th:src="${post.getImage()}" alt="no" height="500" th:maxlength="1000">
+</div>
+<p th:text="${post.getText()}"></p>
+<p>
+    <a th:href="@{{postId}/liked(postId=${post.getId()})}" th:text="${post.getLiked().size()} + ' Likes '"></a>
+    <a th:href="@{{id}/disliked(id=${post.getId()})}" th:text="${post.getDisliked().size()} + ' Dislikes'"></a>
+</p>
+
+<div th:unless="${currentUser == null}">
+    <a th:href="@{{postId}/like(postId=${post.getStringId()})}">
+        <p th:text="${post.getLiked().contains(currentUser)} ? 'Unlike' : 'Like'"></p>
+    </a>
+    <a th:href="@{{postId}/dislike(postId=${post.getStringId()})}">
+        <p th:text="${post.getDisliked().contains(currentUser)} ? 'Remove dislike' : 'Dislike'"></p>
+    </a>
+</div>
+
+<p th:text="${post.getComments().size()} + ' Comments'"></p>
+<hr>
+</body>
+</html>

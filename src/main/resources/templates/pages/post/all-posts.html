@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!--suppress ThymeleafVariablesResolveInspection -->
+<!--suppress ThymeleafVariablesResolveInspection, RequiredAttributes -->
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -9,7 +9,7 @@
 <div th:each="post : ${posts}">
     <a th:href="@{/post/{id}(id=${post.getId()})}">
         <p th:text="${post.getTitle()}"></p>
-        <div th:unless="${(post.getImage().equals(''))}">
+        <div th:unless="${(post.getImage() == null)}">
             <img th:src="${post.getImage()}" alt="no" height="500" th:maxlength="1000">
         </div>
         <p>
@@ -18,6 +18,7 @@
         </p>
         <p th:text="${post.getComments().size()} + ' Comments'"></p>
     </a>
+<!--    TODO: make actions here like/dislike/comment/save-->
     <hr>
 </div>
 </body>

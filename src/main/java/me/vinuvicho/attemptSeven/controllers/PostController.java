@@ -7,6 +7,7 @@ import me.vinuvicho.attemptSeven.entity.post.PostRequest;
 import me.vinuvicho.attemptSeven.entity.post.PostService;
 import me.vinuvicho.attemptSeven.entity.user.User;
 import me.vinuvicho.attemptSeven.entity.user.UserService;
+import org.springframework.boot.Banner;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,15 +29,19 @@ public class PostController {
     public String getAllPosts(Model model) {
         User user = userService.getCurrentUser();
         List<Post> posts = postService.getAllPosts(user);
-        return posts.toString();
+        model.addAttribute("posts", posts);
+        return "pages/post/all-posts";
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HALF_ADMIN', 'ROLE_USER')")
     @GetMapping("/my")
-    public String myPosts() {
-        Set<Post> posts = userService.getCurrentUser().getPosts();
-        return posts.toString();
+    public String myPosts(Model model) {
+        Set<Post> posts = userService.getFullCurrentUser().getPosts();
+        model.addAttribute("posts", posts);
+        return "pages/post/all-posts";
     }
 
+    @PreAuthorize("hasAuthority('post:create')")
     @GetMapping("/new")
     public String createPost(Model model) {
         model.addAttribute("postRequest", new PostRequest());
@@ -45,59 +50,60 @@ public class PostController {
 
     @GetMapping("/")
     public String mainPostPage() {
-        User user = userService.getCurrentUser();
-        if (user == null || user.getSubscribedTo() == null) {           //TODO: make by default and index page replace by subscribedTo posts
-            return postService.getAllPosts(user).toString();
-        }
-        Set<Post> posts = new TreeSet<>(new PostComparator());
-        for (User u: user.getSubscribedTo()) {
-            posts.addAll(u.getPosts());
-        }
-
-        return posts.toString();
+        return "redirect:/";                //TODO: prob move that here and there make some real 'main page'
     }
 
     @PreAuthorize("hasAuthority('post:create')")
     @PostMapping("/new")
-    public String postPost(@RequestBody PostRequest postRequest, Model model) {
+    public String postPost(@ModelAttribute PostRequest postRequest, Model model) {
         User user = userService.getCurrentUser();
         Post post = postService.savePost(user, postRequest);
-        return post.toString();
+        return "redirect:/post/" + post.getId();
     }
 
     @GetMapping("/{postId}")
-    public String getPost(@PathVariable Long postId) {
-        Post post = postService.getPost(userService.getCurrentUser(), postId);
-        return post.toString();
-    }
-    @GetMapping("/{postId}/like")
-    public String likePost(@PathVariable Long postId) {
+    public String getPost(@PathVariable Long postId, Model model) {
         User user = userService.getCurrentUser();
-        if (user == null) throw new IllegalStateException("not logged id");
+        Post post = postService.getPost(user, postId);
+        model.addAttribute("post", post);
+        model.addAttribute("currentUser", user);
+        return "pages/post/one";
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HALF_ADMIN', 'ROLE_USER')")
+    @GetMapping("/{postId}/like")
+    public String likePost(@PathVariable Long postId) {                     //TODO: check if user has access to post
+        User user = userService.getCurrentUser();
         Post post = postService.getPost(user, postId);
         postService.likePost(post, user);
-        return post.toString();
+        return "redirect:/post/" + postId;
     }
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HALF_ADMIN', 'ROLE_USER')")
     @GetMapping("/{postId}/dislike")
-    public String dislikePost(@PathVariable Long postId) {
+    public String dislikePost(@PathVariable Long postId) {                  //TODO: check if user has access to post
         User user = userService.getCurrentUser();
-        if (user == null) throw new IllegalStateException("not logged id");
         Post post = postService.getPost(user, postId);
         postService.dislikePost(post, user);
-        return post.toString();
+        return "redirect:/post/" + postId;
     }
 
     @GetMapping("/{postId}/disliked")
-    public String disliked(@PathVariable Long postId) {
+    public String disliked(@PathVariable Long postId, Model model) {
         User user = userService.getCurrentUser();
         Post post = postService.getPost(user, postId);
-        return post.getDisliked().toString();
+        model.addAttribute("whatIsShown", "Users, that disliked " +
+                "<a href=\"/post/" + post.getId() + "\">" + post.getTitle() + "</a>");
+        model.addAttribute("users", post.getDisliked());
+        return "pages/user/all-users";
     }
 
     @GetMapping("/{postId}/liked")
-    public String liked(@PathVariable Long postId) {
+    public String liked(@PathVariable Long postId, Model model) {
         User user = userService.getCurrentUser();
         Post post = postService.getPost(user, postId);
-        return post.getLiked().toString();
+        model.addAttribute("whatIsShown", "Users, that liked " +
+                "<a href=\"/post/" + post.getId() + "\">" + post.getTitle() + "</a>");
+        model.addAttribute("users", post.getLiked());
+        return "pages/user/all-users";
     }
 }

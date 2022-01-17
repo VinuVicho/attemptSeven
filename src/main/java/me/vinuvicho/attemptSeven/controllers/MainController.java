@@ -29,7 +29,7 @@ public class MainController {
         List<Post> userPosts = postService.getUserSubscribedToPosts(currentUser);
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("posts", userPosts);
-        return "pages/post/subscribed-to-posts";
+        return "pages/post/all-posts";
     }
 
 }
