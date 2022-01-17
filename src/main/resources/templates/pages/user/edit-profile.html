@@ -9,6 +9,7 @@ Edit your profile:
 <br>
 <p th:text="${userRequest.getId()} + ' ' + ${userRequest.getUsername()}"></p>
 <p th:text="'Your email: ' + ${userRequest.getEmail()}"></p>
+
 <form th:method="POST" th:action="@{edit}" th:object="${userRequest}">
 <!--TODO: make update, not post-->
     <label for="profilePhoto">Enter link to photo: </label>

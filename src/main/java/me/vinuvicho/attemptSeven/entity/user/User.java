@@ -83,6 +83,7 @@ public class User implements UserDetails {
         this.password = password;
         this.userRole = userRole;
         this.createdAt = LocalDateTime.now();
+        this.lastActivity = createdAt;
     }
 
     @Override

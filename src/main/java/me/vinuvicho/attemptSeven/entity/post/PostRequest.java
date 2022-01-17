@@ -11,8 +11,10 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class PostRequest {
-    private final String title;
-    private final String text;
-    private final String image;
+    private String title;
+    private String text;
+    private String image;
 
+    public PostRequest() {
+    }
 }

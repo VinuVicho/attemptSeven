@@ -7,7 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 @Transactional(readOnly = true)
@@ -18,7 +20,10 @@ public interface UserDao extends JpaRepository<User, Long> {
     @EntityGraph(attributePaths = {"posts", "subscribedTo", "blockedUsers", "subscribers"})
     Optional<User> findByUsernameAndEnabled(String username, boolean enabled);          //fully load
     @EntityGraph(attributePaths = {"posts", "subscribedTo", "blockedUsers", "subscribers"})
-    User findByIdAndEnabled(Long id, boolean enabled);          //fully load
+    User findByIdAndEnabled(Long id, boolean enabled);                                  //fully load
+
+//    @Query("SELECT User.subscribedTo from User WHERE id = ?1")
+//    List<User> getSubscribedToOnly(Long id);            //TODO: замутити якось, щоб витягувались тільки підписані
 
     @Transactional
     @Modifying

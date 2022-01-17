@@ -14,12 +14,16 @@
 </div>
 <p th:text="${currentUser.getId()} + ' ' + ${currentUser.getUsername()}"></p>
 <p th:text="${currentUser.getAbout() == null} ? 'No bio yet' : 'Bio: ' + ${currentUser.getAbout()}"></p>
-<p th:text="'Created at: ' + ${foundUser.getCreatedAt().toLocalDate()}"></p>
+<p th:text="'Created at: ' + ${currentUser.getCreatedAt().toLocalDate()}"></p>
 <!--<p th:text="'Last activity: ' + 'Under development'"></p> TODO-->
 <br>
 
 <form th:method="GET" th:action="@{edit}">
     <input type="submit" value="Edit">
+</form>
+<br>
+<form th:method="GET" th:action="@{post/new}">
+    <input type="submit" value="New post">
 </form>
 
 <br>

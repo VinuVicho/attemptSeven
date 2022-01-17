@@ -13,7 +13,7 @@ import java.util.Set;
 @Setter
 @Entity
 @ToString
-public class Comment {             //TODO: просто туду, тут купа
+public class Comment {
 
     @SequenceGenerator(name = "comment_sequence", sequenceName = "comment_sequence", allocationSize = 1)
     @Id
@@ -30,4 +30,6 @@ public class Comment {             //TODO: просто туду, тут куп�
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
     private Set<User> disliked = null;
+
+                                                    //TODO: make replies
 }

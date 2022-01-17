@@ -7,14 +7,16 @@ import me.vinuvicho.attemptSeven.entity.post.PostRequest;
 import me.vinuvicho.attemptSeven.entity.post.PostService;
 import me.vinuvicho.attemptSeven.entity.user.User;
 import me.vinuvicho.attemptSeven.entity.user.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-@RestController
+@Controller
 @AllArgsConstructor
 @RequestMapping(value = {"/post"})
 public class PostController {
@@ -23,8 +25,9 @@ public class PostController {
     private PostService postService;
 
     @GetMapping("/all")
-    public String getAllPosts() {
-        List<Post> posts = postService.getAllPosts();
+    public String getAllPosts(Model model) {
+        User user = userService.getCurrentUser();
+        List<Post> posts = postService.getAllPosts(user);
         return posts.toString();
     }
 
@@ -35,15 +38,16 @@ public class PostController {
     }
 
     @GetMapping("/new")
-    public String createPost() {
-        return "creating post";
+    public String createPost(Model model) {
+        model.addAttribute("postRequest", new PostRequest());
+        return "pages/post/new";
     }
 
     @GetMapping("/")
     public String mainPostPage() {
         User user = userService.getCurrentUser();
-        if (user == null || user.getSubscribedTo() == null) {
-            return postService.getAllPosts().toString();
+        if (user == null || user.getSubscribedTo() == null) {           //TODO: make by default and index page replace by subscribedTo posts
+            return postService.getAllPosts(user).toString();
         }
         Set<Post> posts = new TreeSet<>(new PostComparator());
         for (User u: user.getSubscribedTo()) {
@@ -53,25 +57,24 @@ public class PostController {
         return posts.toString();
     }
 
-//    @PreAuthorize("hasAuthority('post:create')")
+    @PreAuthorize("hasAuthority('post:create')")
     @PostMapping("/new")
-    public String postPost(@RequestBody PostRequest postRequest) {
-//        User user = getCurrentUser();
-        User user = userService.getUser("1");
+    public String postPost(@RequestBody PostRequest postRequest, Model model) {
+        User user = userService.getCurrentUser();
         Post post = postService.savePost(user, postRequest);
         return post.toString();
     }
 
     @GetMapping("/{postId}")
     public String getPost(@PathVariable Long postId) {
-        Post post = postService.checkPostAvailability(userService.getCurrentUser(), postId);
+        Post post = postService.getPost(userService.getCurrentUser(), postId);
         return post.toString();
     }
     @GetMapping("/{postId}/like")
     public String likePost(@PathVariable Long postId) {
         User user = userService.getCurrentUser();
         if (user == null) throw new IllegalStateException("not logged id");
-        Post post = postService.checkPostAvailability(user, postId);
+        Post post = postService.getPost(user, postId);
         postService.likePost(post, user);
         return post.toString();
     }
@@ -79,7 +82,7 @@ public class PostController {
     public String dislikePost(@PathVariable Long postId) {
         User user = userService.getCurrentUser();
         if (user == null) throw new IllegalStateException("not logged id");
-        Post post = postService.checkPostAvailability(user, postId);
+        Post post = postService.getPost(user, postId);
         postService.dislikePost(post, user);
         return post.toString();
     }
@@ -87,14 +90,14 @@ public class PostController {
     @GetMapping("/{postId}/disliked")
     public String disliked(@PathVariable Long postId) {
         User user = userService.getCurrentUser();
-        Post post = postService.checkPostAvailability(user, postId);
+        Post post = postService.getPost(user, postId);
         return post.getDisliked().toString();
     }
 
     @GetMapping("/{postId}/liked")
     public String liked(@PathVariable Long postId) {
         User user = userService.getCurrentUser();
-        Post post = postService.checkPostAvailability(user, postId);
+        Post post = postService.getPost(user, postId);
         return post.getLiked().toString();
     }
 }

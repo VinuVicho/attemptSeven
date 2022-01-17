@@ -1,6 +1,7 @@
 package me.vinuvicho.attemptSeven.controllers;
 
 import lombok.AllArgsConstructor;
+import me.vinuvicho.attemptSeven.entity.post.PostRequest;
 import me.vinuvicho.attemptSeven.entity.user.User;
 import me.vinuvicho.attemptSeven.entity.user.UserRequest;
 import me.vinuvicho.attemptSeven.entity.user.UserService;
@@ -48,7 +49,6 @@ public class UserController {
     @PreAuthorize("hasAuthority('user:add')")
     @GetMapping("/{credentials}/block")
     public String blockUser(@PathVariable String credentials) {
-        System.out.println("blocking");
         User currentUser = userService.getFullCurrentUser();
         User userToBlock = userService.getFullUser(credentials);
         if (!currentUser.equals(userToBlock)) {
@@ -81,6 +81,7 @@ public class UserController {
         if (thisUser != null) {
             model.addAttribute("currentUser", thisUser);
             if (foundUser.getId().equals(thisUser.getId())) {
+                model.addAttribute("postRequest", new PostRequest());
                 return "pages/user/my-profile";
             }
         }
@@ -101,7 +102,7 @@ public class UserController {
         return "pages/user/edit-profile";
     }
 
-
+//    @PutMapping("/edit")                              //TODO: make update method
     @PostMapping("/edit")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HALF_ADMIN', 'ROLE_USER')")
     public String updateUserProfile(@ModelAttribute UserRequest request) {
@@ -109,7 +110,5 @@ public class UserController {
         userService.updateUser(user, request);
         return "redirect:/user/" + user.getUsername();
     }
-
-
 
 }
