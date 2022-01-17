@@ -37,8 +37,15 @@ public class PostController {
     @GetMapping("/my")
     public String myPosts(Model model) {
         Set<Post> posts = userService.getFullCurrentUser().getPosts();
-        model.addAttribute("posts", posts);
+        List<Post> loadedPosts = postService.getFullPosts(posts);
+        model.addAttribute("posts", loadedPosts);
         return "pages/post/all-posts";
+    }
+
+
+    @GetMapping("/")
+    public String mainPostPage() {          //TODO: not tested
+        return "redirect:/";                //TODO: prob move that here and there make some real 'main page'
     }
 
     @PreAuthorize("hasAuthority('post:create')")
@@ -47,16 +54,10 @@ public class PostController {
         model.addAttribute("postRequest", new PostRequest());
         return "pages/post/new";
     }
-
-    @GetMapping("/")
-    public String mainPostPage() {
-        return "redirect:/";                //TODO: prob move that here and there make some real 'main page'
-    }
-
     @PreAuthorize("hasAuthority('post:create')")
     @PostMapping("/new")
     public String postPost(@ModelAttribute PostRequest postRequest, Model model) {
-        User user = userService.getCurrentUser();
+        User user = userService.getFullCurrentUser();
         Post post = postService.savePost(user, postRequest);
         return "redirect:/post/" + post.getId();
     }

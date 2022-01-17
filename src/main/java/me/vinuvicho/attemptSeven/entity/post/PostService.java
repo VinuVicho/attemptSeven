@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private PostDao postDao;
+    private UserDao userDao;
 
     public List<Post> getUserSubscribedToPosts(User user) {
         List<Post> userPosts = new ArrayList<>();
@@ -99,8 +100,19 @@ public class PostService {
                 (Objects.equals(postRequest.getImage(), "")) ? null : postRequest.getImage(),       //TODO: make перевірку на лінк
                 LocalDateTime.now()
         );
+        Set<Post> posts = postedBy.getPosts();
+        posts.add(post);
+        postedBy.setPosts(posts);
         postDao.save(post);
+        userDao.save(postedBy);
         return post;
     }
 
+    public List<Post> getFullPosts(Set<Post> posts) {
+        ArrayList<Post> result = new ArrayList<>();
+        for (Post p : posts) {
+            result.add(postDao.getPostById(p.getId()));
+        }
+        return result;
+    }
 }

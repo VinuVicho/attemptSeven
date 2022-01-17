@@ -1,5 +1,6 @@
 package me.vinuvicho.attemptSeven.entity.user;
 
+import me.vinuvicho.attemptSeven.entity.post.Post;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
