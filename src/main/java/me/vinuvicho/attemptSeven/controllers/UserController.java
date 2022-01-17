@@ -1,6 +1,7 @@
 package me.vinuvicho.attemptSeven.controllers;
 
 import lombok.AllArgsConstructor;
+import me.vinuvicho.attemptSeven.entity.post.PostRequest;
 import me.vinuvicho.attemptSeven.entity.user.User;
 import me.vinuvicho.attemptSeven.entity.user.UserRequest;
 import me.vinuvicho.attemptSeven.entity.user.UserService;
@@ -36,7 +37,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('user:add')")
     @GetMapping("/{credentials}/to-friends")
     public String addFriend(@PathVariable String credentials) {
-        User currentUser = getFullCurrentUser();
+        User currentUser = userService.getFullCurrentUser();
         User userToAdd = userService.getFullUser(credentials);
         if (!currentUser.equals(userToAdd)) {
             userService.addFriend(currentUser, userToAdd);
@@ -48,8 +49,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('user:add')")
     @GetMapping("/{credentials}/block")
     public String blockUser(@PathVariable String credentials) {
-        System.out.println("blocking");
-        User currentUser = getFullCurrentUser();
+        User currentUser = userService.getFullCurrentUser();
         User userToBlock = userService.getFullUser(credentials);
         if (!currentUser.equals(userToBlock)) {
             userService.blockUser(currentUser, userToBlock);
@@ -59,28 +59,31 @@ public class UserController {
     }
 
     @GetMapping("/{credentials}/subscribers")
-    @ResponseBody           //TODO: make page for this
     public String getSubscribers(@PathVariable String credentials, Model model) {
-        User user = userService.getUser(credentials);
-        return user.getSubscribers().toString();
+        User user = userService.getFullUser(credentials);
+        model.addAttribute("users", user.getSubscribers());
+        model.addAttribute("whatIsShown", "Users, that subscribed to " + user.getUsername() + ':');
+        return "pages/user/all-users";
     }
 
     @GetMapping("/{credentials}/subscribed")
-    @ResponseBody           //TODO: make page for this
     public String getSubscribedTo(@PathVariable String credentials, Model model) {
-        User user = userService.getUser(credentials);
-        return user.getSubscribedTo().toString();
+        User user = userService.getFullUser(credentials);
+        model.addAttribute("users", user.getSubscribedTo());
+        model.addAttribute("whatIsShown", user.getUsername() + " subscribed to: ");
+        return "pages/user/all-users";
     }
 
     @GetMapping("/{credentials}")
-    public String findUserByUsername(@PathVariable String credentials, Model model) {
+    public String findUser(@PathVariable String credentials, Model model) {
         User foundUser = userService.getFullUser(credentials);
-        User thisUser = getFullCurrentUser();
+        User thisUser = userService.getFullCurrentUser();
         if (thisUser != null) {
-            if (foundUser.getId().equals(thisUser.getId())) {
-                return myAccount(foundUser);
-            }
             model.addAttribute("currentUser", thisUser);
+            if (foundUser.getId().equals(thisUser.getId())) {
+                model.addAttribute("postRequest", new PostRequest());
+                return "pages/user/my-profile";
+            }
         }
 //        else model.addAttribute("currentUser", null);                     //по дефолту нулл
         model.addAttribute("foundUser", foundUser);
@@ -90,24 +93,22 @@ public class UserController {
         return "pages/user/profile";
     }
 
-    public String myAccount(User user) {
-        return "my account: " + user.toString();
+    @GetMapping("/edit")                            //TODO: make admins able to change another user data
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HALF_ADMIN', 'ROLE_USER')")
+    public String getEditPage(Model model) {
+        User user = userService.getCurrentUser();
+        UserRequest userRequest = new UserRequest(user);
+        model.addAttribute("userRequest", userRequest);
+        return "pages/user/edit-profile";
     }
 
-    public User getCurrentUser() {              //TODO: move to UserService
-        try {
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return userService.getUser(((UserDetails) principal).getUsername());
-        } catch (Exception e) {
-            return null;            //BAD TONE
-        }
+//    @PutMapping("/edit")                              //TODO: make update method
+    @PostMapping("/edit")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HALF_ADMIN', 'ROLE_USER')")
+    public String updateUserProfile(@ModelAttribute UserRequest request) {
+        User user = userService.getFullCurrentUser();
+        userService.updateUser(user, request);
+        return "redirect:/user/" + user.getUsername();
     }
-    public User getFullCurrentUser() {              //TODO: move to UserService
-        try {
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return userService.getFullUser(((UserDetails) principal).getUsername());
-        } catch (Exception e) {
-            return null;            //BAD TONE
-        }
-    }
+
 }

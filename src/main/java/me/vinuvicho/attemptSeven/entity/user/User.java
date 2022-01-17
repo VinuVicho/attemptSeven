@@ -23,6 +23,8 @@ import java.util.Set;
 @Table(name = "users")                              //user -- ключове слово в Postgre
 public class User implements UserDetails {
 
+    //TODO: make another entity where will be only Id, Username and PP for public fast access
+
     @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
@@ -80,6 +82,8 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.userRole = userRole;
+        this.createdAt = LocalDateTime.now();
+        this.lastActivity = createdAt;
     }
 
     @Override
@@ -115,6 +119,11 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public void updateUser(UserRequest userRequest) {
+        this.about = userRequest.getAbout();
+        this.profilePhoto = userRequest.getProfilePhoto();
     }
 
     @Override

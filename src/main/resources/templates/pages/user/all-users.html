@@ -5,12 +5,18 @@
     <title>All users</title>
 </head>
 <header>
-<!--    menu here-->
+<ul>
+    <li><a href="/user/all">All Users</a></li>
+    <li><a href="/post/all">All Posts</a></li>
+<!--    <li><a href="/user/all">All Users</a></li>-->
+</ul>
 </header>
 <body>
 <!--TODO: add search user-->
+<p th:utext="${whatIsShown == null} ? '' : ${whatIsShown}"></p>
 <div th:each="user : ${users}">
     <a th:href="@{/user/{credentials}(credentials=${user.getUsername()})}" th:text="${user.getUsername()}"></a>
 </div>
+<p th:text="${users.isEmpty()} ? 'No users here yet' : ''"></p>
 </body>
 </html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<!--suppress RequiredAttributes -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My profile</title>
+</head>
+<body>
+<p>My profile:</p>
+<div th:unless="${(currentUser.getProfilePhoto() == null)}">
+    <a th:href="${currentUser.getProfilePhoto()}">
+        <img th:src="${currentUser.getProfilePhoto()}" height="100" alt="">
+    </a>
+</div>
+<p th:text="${currentUser.getId()} + ' ' + ${currentUser.getUsername()}"></p>
+<p th:text="${currentUser.getAbout() == null} ? 'No bio yet' : 'Bio: ' + ${currentUser.getAbout()}"></p>
+<p th:text="'Created at: ' + ${currentUser.getCreatedAt().toLocalDate()}"></p>
+<!--<p th:text="'Last activity: ' + 'Under development'"></p> TODO-->
+<br>
+
+<form th:method="GET" th:action="@{edit}">
+    <input type="submit" value="Edit">
+</form>
+<br>
+<form th:method="GET" th:action="@{post/new}">
+    <input type="submit" value="New post">
+</form>
+
+<br>
+<a th:href="@{{credentials}/subscribers(credentials=${currentUser.getUsername()})}">
+    <p th:text="${currentUser.getSubscribers().size()} + ' subscribers'"></p></a>
+<a th:href="@{{credentials}/subscribed(credentials=${currentUser.getUsername()})}">
+    <p th:text="${currentUser.getSubscribedTo().size()} + ' subscribed'"></p></a>
+<a th:href="@{{credentials}/blocked(credentials=${currentUser.getUsername()})}">
+    <p th:text="${currentUser.getBlockedUsers().size()} + ' blocked'"></p></a>
+
+<hr>
+<!--<div th:each="post : ${currentUser.getPosts()}">-->
+<!--    <a th:href="@{/post/{id}(id=${post.getId()})}">-->
+<!--        <p th:text="${post.getTitle()}"></p>-->
+<!--        <div th:unless="${(post.getImage().equals(''))}">-->
+<!--            <img th:src="${post.getImage()}" alt="no" height="500">-->
+<!--        </div>-->
+<!--        <p>-->
+<!--            <a th:href="@{/{postId}/liked(postId=${post.getId()})}" th:text="${post.getLiked().size()} + ' Likes '"></a>-->
+<!--            <a th:href="@{/{id}/disliked(id=${post.getId()})}" th:text="${post.getDisliked().size()} + ' Dislikes'"></a>-->
+<!--        </p>-->
+<!--        <p th:text="${post.getComments().size()} + ' Comments'"></p>-->
+<!--    </a>-->
+<!--    <hr>-->
+<!--</div>-->
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<!--suppress ThymeleafVariablesResolveInspection, RequiredAttributes -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Posts</title>
+</head>
+<body>
+<div th:each="post : ${posts}">
+    <a th:href="@{/post/{id}(id=${post.getId()})}">
+        <p th:text="${post.getTitle()}"></p>
+        <div th:unless="${(post.getImage() == null)}">
+            <img th:src="${post.getImage()}" alt="no" height="500" th:maxlength="1000">
+        </div>
+        <p>
+            <a th:href="@{/{postId}/liked(postId=${post.getId()})}" th:text="${post.getLiked().size()} + ' Likes '"></a>
+            <a th:href="@{/{id}/disliked(id=${post.getId()})}" th:text="${post.getDisliked().size()} + ' Dislikes'"></a>
+        </p>
+        <p th:text="${post.getComments().size()} + ' Comments'"></p>
+    </a>
+<!--    TODO: make actions here like/dislike/comment/save-->
+    <hr>
+</div>
+</body>
+</html>

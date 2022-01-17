@@ -22,7 +22,7 @@ public class Post {
     private Long id;
     @ManyToOne(fetch = FetchType.EAGER)
     private User postedBy;
-            //TODO: add comments
+    //TODO: add comments
     private String title;
     private String text;
     private String image;
@@ -40,6 +40,9 @@ public class Post {
     @OneToMany(fetch = FetchType.LAZY)
     private Set<User> disliked = null;
 
+    public String getStringId() {
+        return id.toString();
+    }
 
     public Post(User postedBy, String title, String text, String image, LocalDateTime postedAt) {
         this.postedBy = postedBy;
@@ -48,7 +51,7 @@ public class Post {
         this.image = image;
         this.postedAt = postedAt;
     }
-    public Post() {
 
+    public Post() {
     }
 }
