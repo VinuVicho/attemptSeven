@@ -22,9 +22,9 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/me")
-    public String myAccount() {         //not sure if that works
-        Object principal = SecurityContextHolder.getContext().getAuthentication();
-        return "redirect:/user/" + ((UserDetails) principal).getUsername();
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HALF_ADMIN', 'ROLE_USER')")
+    public String myAccount() {
+        return "redirect:/user/" + userService.getCurrentUser().getUsername();
     }
 
     @GetMapping("/all")

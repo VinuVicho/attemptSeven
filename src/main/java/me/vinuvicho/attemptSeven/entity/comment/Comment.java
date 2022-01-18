@@ -1,12 +1,14 @@
 package me.vinuvicho.attemptSeven.entity.comment;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import me.vinuvicho.attemptSeven.entity.user.User;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -14,7 +16,6 @@ import java.util.Set;
 @Entity
 @ToString
 public class Comment {
-
     @SequenceGenerator(name = "comment_sequence", sequenceName = "comment_sequence", allocationSize = 1)
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_sequence")
@@ -23,13 +24,25 @@ public class Comment {
     private String title;
     private String text;
 
-    @ToString.Exclude
-    @OneToMany(fetch = FetchType.LAZY)
-    private Set<User> liked = null;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private User postedBy;
 
-    @ToString.Exclude
-    @OneToMany(fetch = FetchType.LAZY)
-    private Set<User> disliked = null;
+//    TODO: replies
+//TODO: postedAt
 
-                                                    //TODO: make replies
+        //TODO: prob make counters for liked/disliked to enable lazy initialization
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<User> liked = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<User> disliked = new HashSet<>();
+
+    public Comment() {
+    }
+
+    public Comment(String title, String text, User postedBy) {
+        this.title = title;
+        this.text = text;
+        this.postedBy = postedBy;
+    }
 }

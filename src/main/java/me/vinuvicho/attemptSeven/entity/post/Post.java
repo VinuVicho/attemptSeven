@@ -33,11 +33,11 @@ public class Post {
     private Set<Comment> comments = null;
 
     @ToString.Exclude
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<User> liked = null;
 
     @ToString.Exclude
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<User> disliked = null;
 
     public String getStringId() {

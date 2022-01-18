@@ -14,13 +14,13 @@ public interface PostDao  extends JpaRepository<Post, Long> {
 
 //    TODO: use https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.sorting
 
-    @EntityGraph(attributePaths = {"comments", "liked", "disliked", "postedBy"})
+    @EntityGraph(attributePaths = {"comments.liked", "comments.disliked", "liked", "disliked", "postedBy"})
     Post getPostById(Long id);
 
-    @EntityGraph(attributePaths = {"comments", "liked", "disliked", "postedBy"})
+    @EntityGraph(attributePaths = {"comments.liked", "comments.disliked", "liked", "disliked", "postedBy"})
     List<Post> getPostsByPostedBy(User postedBy);
 
-    @EntityGraph(attributePaths = {"comments", "liked", "disliked", "postedBy"})
+    @EntityGraph(attributePaths = {"comments.liked", "comments.disliked", "liked", "disliked", "postedBy"})
     @Override
     List<Post> findAll();
 }
