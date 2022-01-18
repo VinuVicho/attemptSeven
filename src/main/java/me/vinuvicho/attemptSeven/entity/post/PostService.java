@@ -1,6 +1,9 @@
 package me.vinuvicho.attemptSeven.entity.post;
 
 import lombok.AllArgsConstructor;
+import me.vinuvicho.attemptSeven.entity.comment.Comment;
+import me.vinuvicho.attemptSeven.entity.comment.CommentDao;
+import me.vinuvicho.attemptSeven.entity.comment.CommentRequest;
 import me.vinuvicho.attemptSeven.entity.user.ProfileType;
 import me.vinuvicho.attemptSeven.entity.user.User;
 import me.vinuvicho.attemptSeven.entity.user.UserDao;
@@ -19,6 +22,7 @@ public class PostService {
 
     private PostDao postDao;
     private UserDao userDao;
+    private CommentDao commentDao;
 
     public List<Post> getUserSubscribedToPosts(User user) {
         List<Post> userPosts = new ArrayList<>();
@@ -47,6 +51,19 @@ public class PostService {
         throw new IllegalStateException("No access");
     }
 
+    public void commentPost(User user, Long id, CommentRequest request) {
+        Post post = postDao.getPostById(id);
+        if (hasAccessToPost(user, post)) {
+            Set<Comment> comments = post.getComments();
+            Comment comment = new Comment(request.getTitle(), request.getText(), user);
+            comments.add(comment);
+            post.setComments(comments);
+            commentDao.save(comment);
+            postDao.save(post);
+        }
+        else throw new IllegalStateException("no access");
+    }
+
     public boolean hasAccessToPost(User user, Post post) {
         if (post.getPostedBy().getProfileType() == ProfileType.PUBLIC
                 || post.getPostedBy().getProfileType() == ProfileType.PROTECTED)
@@ -59,30 +76,71 @@ public class PostService {
     }
 
     public void likePost(Post post, User user) {
-        Set<User> likedBy = post.getLiked();
-        Set<User> dislikedBy = post.getDisliked();
-        if (likedBy.contains(user)) {
-            likedBy.remove(user);
-        } else {
-            likedBy.add(user);
-            dislikedBy.remove(user);
+        if (hasAccessToPost(user, post)) {
+            Set<User> likedBy = post.getLiked();
+            Set<User> dislikedBy = post.getDisliked();
+            if (likedBy.contains(user)) {
+                likedBy.remove(user);
+            } else {
+                likedBy.add(user);
+                dislikedBy.remove(user);
+            }
+            post.setLiked(likedBy);
+            post.setDisliked(dislikedBy);
+            postDao.save(post);
         }
-        post.setLiked(likedBy);
-        post.setDisliked(dislikedBy);
-        postDao.save(post);
+        else throw new IllegalStateException("No access");
     }
     public void dislikePost(Post post, User user) {
-        Set<User> likedBy = post.getLiked();
-        Set<User> dislikedBy = post.getDisliked();
-        if (dislikedBy.contains(user)) {
-            dislikedBy.remove(user);
-        } else {
-            dislikedBy.add(user);
-            likedBy.remove(user);
+        if (hasAccessToPost(user, post)) {
+            Set<User> likedBy = post.getLiked();
+            Set<User> dislikedBy = post.getDisliked();
+            if (dislikedBy.contains(user)) {
+                dislikedBy.remove(user);
+            } else {
+                dislikedBy.add(user);
+                likedBy.remove(user);
+            }
+            post.setLiked(likedBy);
+            post.setDisliked(dislikedBy);
+            postDao.save(post);
         }
-        post.setLiked(likedBy);
-        post.setDisliked(dislikedBy);
-        postDao.save(post);
+        else throw new IllegalStateException("No access");
+    }
+
+    public void dislikeComment(User user, Post post, Comment comment) {
+        if (hasAccessToPost(user, post)) {
+            Set<User> likedBy = comment.getLiked();
+            Set<User> dislikedBy = comment.getDisliked();
+            if (dislikedBy.contains(user)) {
+                dislikedBy.remove(user);
+            } else {
+                dislikedBy.add(user);
+                likedBy.remove(user);
+            }
+            post.setLiked(likedBy);
+            comment.setLiked(likedBy);
+            comment.setDisliked(dislikedBy);
+            commentDao.save(comment);
+        }
+        else throw new IllegalStateException("No access");
+    }
+    public void likeComment(User user, Post post, Comment comment) {
+        if (hasAccessToPost(user, post)) {
+            Set<User> likedBy = comment.getLiked();
+            Set<User> dislikedBy = comment.getDisliked();
+            if (likedBy.contains(user)) {
+                likedBy.remove(user);
+            } else {
+                likedBy.add(user);
+                dislikedBy.remove(user);
+            }
+            post.setLiked(likedBy);
+            comment.setLiked(likedBy);
+            comment.setDisliked(dislikedBy);
+            commentDao.save(comment);
+        }
+        else throw new IllegalStateException("No access");
     }
 
     public List<Post> getAllPosts(User user) {

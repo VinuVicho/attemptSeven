@@ -1,6 +1,9 @@
 package me.vinuvicho.attemptSeven.controllers;
 
 import lombok.AllArgsConstructor;
+import me.vinuvicho.attemptSeven.entity.comment.Comment;
+import me.vinuvicho.attemptSeven.entity.comment.CommentRequest;
+import me.vinuvicho.attemptSeven.entity.comment.CommentService;
 import me.vinuvicho.attemptSeven.entity.post.Post;
 import me.vinuvicho.attemptSeven.entity.post.PostComparator;
 import me.vinuvicho.attemptSeven.entity.post.PostRequest;
@@ -24,6 +27,7 @@ public class PostController {
 
     private UserService userService;
     private PostService postService;
+    private CommentService commentService;
 
     @GetMapping("/all")
     public String getAllPosts(Model model) {
@@ -41,7 +45,6 @@ public class PostController {
         model.addAttribute("posts", loadedPosts);
         return "pages/post/all-posts";
     }
-
 
     @GetMapping("/")
     public String mainPostPage() {          //TODO: not tested
@@ -67,13 +70,15 @@ public class PostController {
         User user = userService.getCurrentUser();
         Post post = postService.getPost(user, postId);
         model.addAttribute("post", post);
+        model.addAttribute("newComment", new CommentRequest());
         model.addAttribute("currentUser", user);
+        model.addAttribute("comments", post.getComments());
         return "pages/post/one";
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HALF_ADMIN', 'ROLE_USER')")
     @GetMapping("/{postId}/like")
-    public String likePost(@PathVariable Long postId) {                     //TODO: check if user has access to post
+    public String likePost(@PathVariable Long postId) {
         User user = userService.getCurrentUser();
         Post post = postService.getPost(user, postId);
         postService.likePost(post, user);
@@ -81,11 +86,62 @@ public class PostController {
     }
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HALF_ADMIN', 'ROLE_USER')")
     @GetMapping("/{postId}/dislike")
-    public String dislikePost(@PathVariable Long postId) {                  //TODO: check if user has access to post
+    public String dislikePost(@PathVariable Long postId) {
         User user = userService.getCurrentUser();
         Post post = postService.getPost(user, postId);
         postService.dislikePost(post, user);
         return "redirect:/post/" + postId;
+    }
+
+    @PreAuthorize("hasAuthority('post:comment')")
+    @PostMapping("/{postId}/comment")
+    public String commentPost(@PathVariable Long postId, @ModelAttribute CommentRequest commentRequest) {
+        User user = userService.getCurrentUser();
+        postService.commentPost(user, postId, commentRequest);
+        return "redirect:/post/" + postId;
+    }
+
+    @PreAuthorize("hasAuthority('post:comment')")
+    @GetMapping("/{postId}/{commentId}/like")
+    public String likeComment(@PathVariable Long postId, @PathVariable Long commentId) {
+        User user = userService.getCurrentUser();
+        Post post = postService.getPost(user, postId);
+        Comment comment = commentService.getComment(commentId);
+        postService.likeComment(user, post, comment);
+        return "redirect:/post/" + postId;
+    }
+    @PreAuthorize("hasAuthority('post:comment')")
+    @GetMapping("/{postId}/{commentId}/dislike")
+    public String dislikeComment(@PathVariable Long postId, @PathVariable Long commentId) {
+        User user = userService.getCurrentUser();
+        Post post = postService.getPost(user, postId);
+        Comment comment = commentService.getComment(commentId);
+        postService.dislikeComment(user, post, comment);
+        return "redirect:/post/" + postId;
+    }
+
+
+    @GetMapping("/{postId}/{commentId}/disliked")
+    public String dislikedComment(@PathVariable Long postId, @PathVariable Long commentId, Model model) {
+        User user = userService.getCurrentUser();
+        Post post = postService.getPost(user, postId);
+        Comment comment = commentService.getComment(commentId);
+        model.addAttribute("whatIsShown", "Users, that disliked " +
+                "comment " + comment.getTitle() + " on a post " +
+                "<a href=\"/post/" + post.getId() + "\">" + post.getTitle() + "</a>");
+        model.addAttribute("users", comment.getDisliked());
+        return "pages/user/all-users";
+    }
+    @GetMapping("/{postId}/{commentId}/liked")
+    public String likedComment(@PathVariable Long postId, @PathVariable Long commentId, Model model) {
+        User user = userService.getCurrentUser();
+        Post post = postService.getPost(user, postId);
+        Comment comment = commentService.getComment(commentId);
+        model.addAttribute("whatIsShown", "Users, that liked " +
+                "comment " + comment.getTitle() + " on a post " +
+                "<a href=\"/post/" + post.getId() + "\">" + post.getTitle() + "</a>");
+        model.addAttribute("users", comment.getLiked());
+        return "pages/user/all-users";
     }
 
     @GetMapping("/{postId}/disliked")
@@ -97,7 +153,6 @@ public class PostController {
         model.addAttribute("users", post.getDisliked());
         return "pages/user/all-users";
     }
-
     @GetMapping("/{postId}/liked")
     public String liked(@PathVariable Long postId, Model model) {
         User user = userService.getCurrentUser();

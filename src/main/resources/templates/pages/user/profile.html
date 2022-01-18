@@ -32,20 +32,17 @@
     </a>
 </div>
 <hr>
-<!--<div th:each="post : ${foundUser.getPosts()}">-->
-<!--    <a th:href="@{/post/{id}(id=${post.getId()})}">-->
-<!--        <p th:text="${post.getTitle()}"></p>-->
-<!--        <div th:unless="${(post.getImage().equals(''))}">-->
-<!--            <img th:src="${post.getImage()}" alt="no" height="500">-->
-<!--        </div>-->
-<!--        <p>-->
-<!--            <a th:href="@{/{postId}/liked(postId=${post.getId()})}" th:text="${post.getLiked().size()} + ' Likes '"></a>-->
-<!--            <a th:href="@{/{id}/disliked(id=${post.getId()})}" th:text="${post.getDisliked().size()} + ' Dislikes'"></a>-->
-<!--        </p>-->
-<!--        <p th:text="${post.getComments().size()} + ' Comments'"></p>-->
-<!--    </a>-->
-<!--    <hr>-->
-<!--</div>-->
+<div th:each="post : ${foundUser.getPosts()}">
+    <a th:href="@{/post/{id}(id=${post.getId()})}">
+        <p th:text="${post.getTitle()}"></p>
+        <div th:unless="${(post.getImage() == null)}">
+            <img th:src="${post.getImage()}" alt="no" height="500" th:maxlength="1000">
+        </div>
+        <p th:text="${post.getText()}"></p>
+    </a>
+    <!--    TODO: make fast actions here like/dislike/comment/save-->
+    <hr>
+</div>
 
 </body>
 </html>
