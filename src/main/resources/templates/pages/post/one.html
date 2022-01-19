@@ -9,7 +9,6 @@
     <a href="/login">Login</a>
 </header>
 <body>
-<!--TODO: add postedBy-->
 <p th:text="${post.getTitle()}"></p>
 <div th:unless="${(post.getImage() == null)}">
     <img th:src="${post.getImage()}" alt="no" height="500" th:maxlength="1000">
@@ -19,9 +18,13 @@
     <a th:href="@{{postId}/liked(postId=${post.getId()})}" th:text="${post.getLiked().size()} + ' Likes '"></a>
     <a th:href="@{{id}/disliked(id=${post.getId()})}" th:text="${post.getDisliked().size()} + ' Dislikes'"></a>
 </p>
-<p th:text="${'Posted by ' + post.getPostedBy().getId()}"></p>
+<text th:text="${'Posted by: '}"></text>
+    <a th:href="@{/user/{credentials}(credentials=${post.getPostedBy().getUsername()})}"
+       th:text="${post.getPostedBy().getUsername()}"></a>
+<p th:text="${'Posted at: ' + post.getPostedAt()}"></p>
 <hr>
 
+<!--FIXME: нащо я це заховав?-->
 <div th:unless="${currentUser == null}">
     <a th:href="@{{postId}/like(postId=${post.getId()})}">
         <p th:text="${post.getLiked().contains(currentUser)} ? 'Unlike' : 'Like'"></p>
@@ -29,8 +32,9 @@
     <a th:href="@{{postId}/dislike(postId=${post.getId()})}">
         <p th:text="${post.getDisliked().contains(currentUser)} ? 'Remove dislike' : 'Dislike'"></p>
     </a>
+    <hr>
 </div>
-<hr>
+
 <form th:method="POST" th:action="@{{postId}/comment(postId=${post.getId()})}" th:object="${newComment}">
     <p>Comment this post:</p>
     <label for="title">Enter title:</label>
@@ -48,6 +52,7 @@
 <div th:each="comment : ${comments}">
     <p th:text="${comment.getTitle()}"></p>
     <p th:text="${comment.getText()}"></p>
+    <text th:text="${'Commented at: ' + comment.getPostedAt() + ' by ' + comment.getPostedBy().getUsername()}"></text>
     <p>
         <a th:href="@{{postId}/{commentId}/liked(postId=${post.getId()}, commentId=${comment.getId()})}" th:text="${comment.getLiked().size()} + ' Likes '"></a>
         <a th:href="@{{postId}/{commentId}/disliked(postId=${post.getId()}, commentId=${comment.getId()})}" th:text="${comment.getDisliked().size()} + ' Dislikes'"></a>

@@ -14,8 +14,8 @@
 </div>
 <p th:text="${currentUser.getId()} + ' ' + ${currentUser.getUsername()}"></p>
 <p th:text="${currentUser.getAbout() == null} ? 'No bio yet' : 'Bio: ' + ${currentUser.getAbout()}"></p>
-<p th:text="'Created at: ' + ${currentUser.getCreatedAt().toLocalDate()}"></p>
-<!--<p th:text="'Last activity: ' + 'Under development'"></p> TODO-->
+<p th:text="${'Created at: ' + currentUser.getCreatedAt().toLocalDate()}"></p>
+<p th:text="${'Last activity: ' + currentUser.getLastActivity()}"></p>
 <br>
 
 <form th:method="GET" th:action="@{edit}">
