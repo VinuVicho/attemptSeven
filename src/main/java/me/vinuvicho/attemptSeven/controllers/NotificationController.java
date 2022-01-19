@@ -32,14 +32,12 @@ public class NotificationController {
         notificationService.rejectNotification(user, Long.valueOf(id));
         return "rejected?";
     }
-
     @GetMapping("/{id}/block")
     public String blockUserNotification(@PathVariable String id) {
         User user = userService.getCurrentUser();
         notificationService.blockUserNotification(user, Long.valueOf(id));
         return "blocked?";
     }
-
     @GetMapping("/{id}/apply")
     public String applyUserNotification(@PathVariable String id) {
         User user = userService.getCurrentUser();

@@ -5,12 +5,10 @@ import me.vinuvicho.attemptSeven.entity.comment.Comment;
 import me.vinuvicho.attemptSeven.entity.comment.CommentRequest;
 import me.vinuvicho.attemptSeven.entity.comment.CommentService;
 import me.vinuvicho.attemptSeven.entity.post.Post;
-import me.vinuvicho.attemptSeven.entity.post.PostComparator;
 import me.vinuvicho.attemptSeven.entity.post.PostRequest;
 import me.vinuvicho.attemptSeven.entity.post.PostService;
 import me.vinuvicho.attemptSeven.entity.user.User;
 import me.vinuvicho.attemptSeven.entity.user.UserService;
-import org.springframework.boot.Banner;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 @Controller
 @AllArgsConstructor
@@ -36,7 +33,6 @@ public class PostController {
         model.addAttribute("posts", posts);
         return "pages/post/all-posts";
     }
-
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HALF_ADMIN', 'ROLE_USER')")
     @GetMapping("/my")
     public String myPosts(Model model) {
@@ -119,7 +115,6 @@ public class PostController {
         postService.dislikeComment(user, post, comment);
         return "redirect:/post/" + postId;
     }
-
 
     @GetMapping("/{postId}/{commentId}/disliked")
     public String dislikedComment(@PathVariable Long postId, @PathVariable Long commentId, Model model) {
