@@ -27,6 +27,8 @@ public interface UserDao extends JpaRepository<User, Long> {
 //    @Query("SELECT User.subscribedTo from User WHERE id = ?1")
 //    List<User> getSubscribedToOnly(Long id);            //TODO: замутити якось, щоб витягувались тільки підписані
 
+    void deleteById(Long id);
+
     @Query("select u from User u where u.username = :username or u.email = :email")                 //haven't tested yet
     User findByUsernameOrEmail(@Param("username") String username, @Param("email") String email);
 

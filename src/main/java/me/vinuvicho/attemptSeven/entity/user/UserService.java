@@ -3,10 +3,9 @@ package me.vinuvicho.attemptSeven.entity.user;
 import lombok.AllArgsConstructor;
 import me.vinuvicho.attemptSeven.entity.notification.NotificationService;
 import me.vinuvicho.attemptSeven.entity.notification.NotificationType;
-import me.vinuvicho.attemptSeven.entity.post.Post;
 import me.vinuvicho.attemptSeven.entity.post.PostDao;
-import me.vinuvicho.attemptSeven.entity.post.PostService;
 import me.vinuvicho.attemptSeven.registration.token.ConfirmationToken;
+import me.vinuvicho.attemptSeven.registration.token.ConfirmationTokenDao;
 import me.vinuvicho.attemptSeven.registration.token.ConfirmationTokenService;
 import me.vinuvicho.attemptSeven.registration.token.TokenType;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -27,6 +27,7 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final ConfirmationTokenService tokenService;
     private final NotificationService notificationService;
+    private final ConfirmationTokenDao tokenDao;
     private final PostDao postDao;
 
     public boolean hasAccessToPosts(User from, User to) {
@@ -145,22 +146,25 @@ public class UserService implements UserDetailsService {
     public void enableUser(String email) {
         userDao.enableUser(email);
     }
+    @Transactional
     public ConfirmationToken signUpUser(User user) {       //returns token to confirm
-        boolean userExists =
+        boolean userExists =                                //TODO (optimize): make this using 1 db transaction
                 userDao.findByUsername(user.getUsername()).isPresent() ||
-                        userDao.findByEmail(user.getEmail()).isPresent();
+                userDao.findByEmail(user.getEmail()).isPresent();
         if (userExists) {
             User realUser =
-                    userDao.findByUsername(user.getUsername()).orElse(
-                            userDao.findByEmail(user.getEmail()).orElseThrow());
+                    userDao.findByEmail(user.getEmail()).orElse(
+                    userDao.findByUsername(user.getUsername()).orElseThrow());
             if (realUser.isEnabled())
                 throw new IllegalStateException("User with such email or username already exists");
             else {
-                ConfirmationToken token = tokenService.checkVerifyTokenUnconfirmed(realUser);
+                ConfirmationToken token = tokenService.getVerifyTokenByUser(realUser);
                 if (token.getExpiresAt().minusMinutes(5).isAfter(LocalDateTime.now())) {
                     return token;
                 }
-                tokenService.setConfirmedAt(token.getToken(), LocalDateTime.now().withYear(0));  //FIXME: кастиль, зробити delete
+                Long userId = token.getUser().getId();
+                tokenService.deleteToken(token.getToken());
+                userDao.deleteById(userId);
             }
         }
         //Steal password here   xd
@@ -177,6 +181,10 @@ public class UserService implements UserDetailsService {
         );
         tokenService.saveConfirmationToken(token);
         return token;
+    }
+
+    public void deleteUser(Long id) {
+        userDao.deleteById(id);
     }
 
     @Override
