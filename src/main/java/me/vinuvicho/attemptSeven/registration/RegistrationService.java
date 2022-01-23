@@ -1,6 +1,7 @@
 package me.vinuvicho.attemptSeven.registration;
 
 import lombok.AllArgsConstructor;
+import me.vinuvicho.attemptSeven.additional.Validator;
 import me.vinuvicho.attemptSeven.email.EmailSender;
 import me.vinuvicho.attemptSeven.entity.user.User;
 import me.vinuvicho.attemptSeven.entity.user.UserRole;
@@ -21,8 +22,8 @@ public class RegistrationService {
     private final EmailSender emailSender;
 
     public String register(RegistrationRequest request) {
-        if (!new Validate().validateEmail(request.getEmail())) {
-            throw new IllegalStateException("Email not valid");
+        if (!new Validator().validateRegistrationRequest(request)) {
+            throw new IllegalStateException("Not valid credentials");
         }
         ConfirmationToken token = userService.signUpUser(
             new User(

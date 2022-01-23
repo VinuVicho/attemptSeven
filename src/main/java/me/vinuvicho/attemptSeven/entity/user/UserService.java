@@ -112,20 +112,24 @@ public class UserService implements UserDetailsService {
             throw new IllegalStateException("No user found");
         }
     }
-    public User getCurrentUser() {              //TODO: move to UserService
+
+    public User getCurrentUser() {
         try {
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return getUser(((UserDetails) principal).getUsername());
+            User user = getUser(((UserDetails) principal).getUsername());
+            user.setLastActivity(LocalDateTime.now());          //тут мала б збиратись статистика
+            userDao.save(user);
+            return user;
         } catch (Exception e) {
             return null;            //BAD TONE
         }
     }
-    public User getFullCurrentUser() {              //TODO: move to UserService
+    public User getFullCurrentUser() {
         try {
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             User user = getFullUser(((UserDetails) principal).getUsername());
-            System.out.println(user.getUsername() +
-                    " Тут мало б бути зчитування даних користувача типу остання активність");
+            user.setLastActivity(LocalDateTime.now());          //тут мала б збиратись статистика
+            userDao.save(user);
             return user;
         } catch (Exception e) {
             return null;            //BAD TONE

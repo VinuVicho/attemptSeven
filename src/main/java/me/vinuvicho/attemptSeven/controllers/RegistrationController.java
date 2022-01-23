@@ -22,7 +22,6 @@ public class RegistrationController {
         model.addAttribute("token", token);
         return "pages/basic/check-email";
     }
-
     @GetMapping()
     public String registerPage(Model model) {
         model.addAttribute("registrationRequest", new RegistrationRequest());

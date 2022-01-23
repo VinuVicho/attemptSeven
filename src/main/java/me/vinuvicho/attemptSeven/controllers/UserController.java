@@ -6,8 +6,6 @@ import me.vinuvicho.attemptSeven.entity.user.User;
 import me.vinuvicho.attemptSeven.entity.user.UserRequest;
 import me.vinuvicho.attemptSeven.entity.user.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +24,6 @@ public class UserController {
     public String myAccount() {
         return "redirect:/user/" + userService.getCurrentUser().getUsername();
     }
-
     @GetMapping("/all")
     public String getAllUsers(Model model) {
         List<User> users = userService.getAllUsers();
@@ -65,7 +62,6 @@ public class UserController {
         model.addAttribute("whatIsShown", "Users, that subscribed to " + user.getUsername() + ':');
         return "pages/user/all-users";
     }
-
     @GetMapping("/{credentials}/subscribed")
     public String getSubscribedTo(@PathVariable String credentials, Model model) {
         User user = userService.getFullUser(credentials);
@@ -102,13 +98,11 @@ public class UserController {
         return "pages/user/edit-profile";
     }
 
-//    @PutMapping("/edit")                              //TODO: make update method
-    @PostMapping("/edit")
+    @PostMapping("/edit")                             //TODO: make update method
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HALF_ADMIN', 'ROLE_USER')")
     public String updateUserProfile(@ModelAttribute UserRequest request) {
         User user = userService.getFullCurrentUser();
         userService.updateUser(user, request);
         return "redirect:/user/" + user.getUsername();
     }
-
 }

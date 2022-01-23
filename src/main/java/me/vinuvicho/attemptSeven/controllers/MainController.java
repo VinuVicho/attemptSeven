@@ -23,7 +23,7 @@ public class MainController {
         return "pages/basic/login";
     }
 
-    @GetMapping("/")
+    @GetMapping("/")        //TODO: make normal main page
     public String mainPage(Model model) {
         User currentUser = userService.getFullCurrentUser();
         List<Post> userPosts = postService.getUserSubscribedToPosts(currentUser);

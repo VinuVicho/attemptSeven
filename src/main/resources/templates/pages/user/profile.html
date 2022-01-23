@@ -13,8 +13,8 @@
 </div>
 <p th:text="${foundUser.getId()} + ' ' + ${foundUser.getUsername()}"></p>
 <p th:text="${foundUser.getAbout() == null} ? 'No bio yet' : 'Bio: ' + ${foundUser.getAbout()}"></p>
-<p th:text="'Created at: ' + ${foundUser.getCreatedAt().toLocalDate()}"></p>
-<!--<p th:text="'Last activity: ' + 'Under development'"></p> TODO-->
+<p th:text="${'Created at: ' + foundUser.getCreatedAt().toLocalDate()}"></p>
+<p th:text="${'Last activity: ' + foundUser.getLastActivity()}"></p>
 <br>
 <a th:href="@{{credentials}/subscribers(credentials=${foundUser.getUsername()})}">
     <p th:text="${foundUser.getSubscribers().size()} + ' subscribers'"></p></a>

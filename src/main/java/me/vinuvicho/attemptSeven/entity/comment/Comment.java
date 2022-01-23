@@ -1,13 +1,13 @@
 package me.vinuvicho.attemptSeven.entity.comment;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import me.vinuvicho.attemptSeven.entity.user.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,6 +23,7 @@ public class Comment {
 
     private String title;
     private String text;
+    private LocalDateTime postedAt;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private User postedBy;
@@ -44,5 +45,6 @@ public class Comment {
         this.title = title;
         this.text = text;
         this.postedBy = postedBy;
+        this.postedAt = LocalDateTime.now();
     }
 }
