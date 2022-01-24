@@ -13,8 +13,8 @@
             <img th:src="${post.getImage()}" alt="no" height="500" th:maxlength="1000">
         </div>
         <p>
-            <a th:href="@{/{postId}/liked(postId=${post.getId()})}" th:text="${post.getLiked().size()} + ' Likes '"></a>
-            <a th:href="@{/{id}/disliked(id=${post.getId()})}" th:text="${post.getDisliked().size()} + ' Dislikes'"></a>
+            <a th:href="@{/post/{postId}/liked(postId=${post.getId()})}" th:text="${post.getLiked().size()} + ' Likes '"></a>
+            <a th:href="@{/post/{id}/disliked(id=${post.getId()})}" th:text="${post.getDisliked().size()} + ' Dislikes'"></a>
         </p>
         <p th:text="${post.getComments().size()} + ' Comments'"></p>
     </a>

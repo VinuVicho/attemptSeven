@@ -3,9 +3,7 @@ package me.vinuvicho.attemptSeven.entity.user;
 import lombok.AllArgsConstructor;
 import me.vinuvicho.attemptSeven.entity.notification.NotificationService;
 import me.vinuvicho.attemptSeven.entity.notification.NotificationType;
-import me.vinuvicho.attemptSeven.entity.post.PostDao;
 import me.vinuvicho.attemptSeven.registration.token.ConfirmationToken;
-import me.vinuvicho.attemptSeven.registration.token.ConfirmationTokenDao;
 import me.vinuvicho.attemptSeven.registration.token.ConfirmationTokenService;
 import me.vinuvicho.attemptSeven.registration.token.TokenType;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,8 +25,6 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final ConfirmationTokenService tokenService;
     private final NotificationService notificationService;
-    private final ConfirmationTokenDao tokenDao;
-    private final PostDao postDao;
 
     public boolean hasAccessToPosts(User from, User to) {
         if (to.getProfileType() == ProfileType.PUBLIC || to.getProfileType() == ProfileType.PROTECTED) return true;
