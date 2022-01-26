@@ -14,19 +14,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static me.vinuvicho.attemptSeven.entity.user.UserRole.ADMIN;
 
-@Configuration
+//@Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final PasswordEncoder passwordEncoder;
-    private final UserService userService;
-
-    @Autowired
-    public ApplicationSecurityConfig(PasswordEncoder passwordEncoder, UserService userService) {
-        this.passwordEncoder = passwordEncoder;
-        this.userService = userService;
-    }
+//    private final PasswordEncoder passwordEncoder;
+//    private final UserService userService;
+//
+//    @Autowired
+//    public ApplicationSecurityConfig(PasswordEncoder passwordEncoder, UserService userService) {
+//        this.passwordEncoder = passwordEncoder;
+//        this.userService = userService;
+//    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -48,29 +48,17 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         ;
     }
 
+////        працює і без цього коду лол
 //    @Override
-//    @Bean
-//    protected UserDetailsService userDetailsService() {
-//        UserDetails userVinuVicho = User.builder()
-//                .username("VinuVicho")
-//                .password(passwordEncoder.encode("1"))
-////                .roles(ADMIN.name())                                                                     //спрінг розуміє як ROLE_ADMIN
-//                .authorities(ADMIN.getGrantedAuthorities())
-//                .build();
-//        return new InMemoryUserDetailsManager(userVinuVicho);
+//    protected void configure(AuthenticationManagerBuilder auth) {
+//        auth.authenticationProvider(daoAuthenticationProvider());
 //    }
-
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(daoAuthenticationProvider());
-    }
-
-    @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(passwordEncoder);
-        provider.setUserDetailsService(userService);
-        return provider;
-    }
+//
+//    @Bean         //метод має повертати бін
+//    public DaoAuthenticationProvider daoAuthenticationProvider() {
+//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+//        provider.setPasswordEncoder(passwordEncoder);
+//        provider.setUserDetailsService(userService);
+//        return provider;
+//    }
 }

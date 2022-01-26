@@ -24,8 +24,12 @@ public class ConfirmationTokenService {
         confirmationTokenDao.updateConfirmedAt(token, time);
     }
 
-    public ConfirmationToken checkVerifyTokenUnconfirmed(User user) {
-        return confirmationTokenDao.findByUserAndTokenTypeAndConfirmedAt(user, TokenType.VERIFY_ACCOUNT, null)
+    public void deleteToken(String token) {
+        confirmationTokenDao.deleteByToken(token);
+    }
+
+    public ConfirmationToken getVerifyTokenByUser(User user) {
+        return confirmationTokenDao.findByUserAndTokenType(user, TokenType.VERIFY_ACCOUNT)
                 .orElseThrow();
     }
 }

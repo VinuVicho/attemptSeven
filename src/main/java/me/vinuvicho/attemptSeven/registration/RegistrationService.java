@@ -44,17 +44,13 @@ public class RegistrationService {
         ConfirmationToken confirmationToken = confirmationTokenService.getToken(token)
                 .orElseThrow(() -> new IllegalStateException("token not found"));
         if (confirmationToken.getConfirmedAt() != null) {
-            if (confirmationToken.getConfirmedAt().isAfter(LocalDateTime.now().withYear(666))) {    //кастиль, рік = 1, якщо час сплив, 10 - rejected
-                throw new IllegalStateException("Email already confirmed");                         //кастиль вже не потрібний
-            }
-            if (confirmationToken.getConfirmedAt().getYear() == 11) {
-                throw new IllegalStateException("Token already rejected");
-            }
+            throw new IllegalStateException("Email already confirmed");
         }
-
-        if (confirmationToken.getExpiresAt().isBefore(LocalDateTime.now()) ||
-                confirmationToken.getConfirmedAt() != null && confirmationToken.getConfirmedAt().getYear() == 1) {
-            throw new IllegalStateException("Token expired");
+        if (confirmationToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+            Long userId = confirmationTokenService.getToken(token).orElseThrow().getUser().getId();
+            confirmationTokenService.deleteToken(token);
+            userService.deleteUser(userId);
+            throw new IllegalStateException("Token expired, register again");
         }
         confirmationTokenService.setConfirmedAt(token, LocalDateTime.now());
         userService.enableUser(confirmationToken.getUser().getEmail());
@@ -64,13 +60,13 @@ public class RegistrationService {
     public void rejectToken(String token) {
         ConfirmationToken rejectedToken = confirmationTokenService.getToken(token)
                 .orElseThrow(() -> new IllegalStateException("token not found"));
-        if (rejectedToken.getConfirmedAt() != null &&
-                rejectedToken.getConfirmedAt().isAfter(LocalDateTime.now().withYear(666))) {    //кастиль, рік = 1, якщо час сплив, 10 - rejected
+        if (rejectedToken.getConfirmedAt() != null) {
             throw new IllegalStateException("Token already confirmed");
                     //Block user?
         }
-        confirmationTokenService.setConfirmedAt(token, LocalDateTime.now().withYear(-10));       //кастиль
-                    //Maybe block email? with special code to make email valid again
+        Long userId = rejectedToken.getUser().getId();
+        confirmationTokenService.deleteToken(token);
+        userService.deleteUser(userId);
     }
 
     private String buildEmail(String name, String confirmationLink, String rejectLink) {           //TODO make own email
